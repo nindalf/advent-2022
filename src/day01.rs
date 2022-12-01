@@ -13,13 +13,15 @@ fn max_calories_3(input: String) -> i32 {
 }
 
 fn heap_of_calories(input: String) -> BinaryHeap<i32> {
-    input //                                                            "1\n2\n3\n\n4\n\n5\n6\n"
-        .lines() //                                                     ["1", "2", "3", "", "4", "", "5", "6"]
-        .map(|line| line.trim().parse::<i32>()) //                      [Ok(1), Ok(2), Ok(3), ParseIntError, Ok(4), ParseIntError, Ok(5), Ok(6)]
-        .collect::<Vec<_>>()
-        .split(|num| num.is_err()) //                                   [[Ok(1), Ok(2), Ok(3)], [Ok(4)], [Ok(5), Ok(6)]]
-        .map(|arr| arr.iter().filter_map(|i| i.as_ref().ok()).sum()) // [6, 4, 11]
-        .collect() //                                                   BinaryHeap {data: [4, 6, 11]}
+    input
+        .split("\n\n")
+        .map(|elf| {
+            elf.lines()
+                .map(|calorie| calorie.trim().parse::<i32>())
+                .flatten()
+                .sum()
+        })
+        .collect()
 }
 
 #[cfg(test)]
