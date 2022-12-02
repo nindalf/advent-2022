@@ -17,8 +17,7 @@ fn heap_of_calories(input: String) -> BinaryHeap<i32> {
         .split("\n\n")
         .map(|elf| {
             elf.lines()
-                .map(|calorie| calorie.trim().parse::<i32>())
-                .flatten()
+                .flat_map(|calorie| calorie.trim().parse::<i32>())
                 .sum()
         })
         .collect()
