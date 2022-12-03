@@ -5,7 +5,8 @@ fn part_1(input: &str) -> i32 {
     input
         .lines()
         .map(|backpack| backpack.split_at(backpack.len() / 2))
-        .map(|(first, second)| common_item_priority(&[first, second]))
+        .map(|(first, second)| find_common_item(&[first, second]))
+        .map(|item| item.priority())
         .sum()
 }
 
@@ -15,11 +16,12 @@ fn part_2(input: &str) -> i32 {
         .lines()
         .collect::<Vec<_>>()
         .chunks(3)
-        .map(common_item_priority)
+        .map(find_common_item)
+        .map(|item| item.priority())
         .sum()
 }
 
-fn common_item_priority(backpacks: &[&str]) -> i32 {
+fn find_common_item(backpacks: &[&str]) -> char {
     assert!(backpacks.len() > 1);
     let first = backpacks.first().unwrap().chars().collect::<HashSet<_>>();
     let intersection = backpacks
@@ -32,13 +34,23 @@ fn common_item_priority(backpacks: &[&str]) -> i32 {
         });
 
     assert_eq!(intersection.len(), 1);
-    let common_item = *intersection.iter().next().unwrap();
-    match common_item {
-        'a'..='z' => (common_item as i32 - 'a' as i32) + 1,
-        'A'..='Z' => (common_item as i32 - 'A' as i32) + 27,
-        _ => panic!("Invalid char"),
+    *intersection.iter().next().unwrap()
+}
+
+trait Priority {
+    fn priority(self) -> i32;
+}
+
+impl Priority for char {
+    fn priority(self) -> i32 {
+        match self {
+            c @ 'a'..='z' => (c as i32 - 'a' as i32) + 1,
+            c @ 'A'..='Z' => (c as i32 - 'A' as i32) + 27,
+            c @ _ => panic!("Cannot compute priority for {c}"),
+        }
     }
 }
+
 #[cfg(test)]
 mod tests {
     use std::time::Instant;
@@ -54,7 +66,7 @@ mod tests {
     }
 
     #[test]
-    fn part_1_real() -> Result<()> {
+    fn part_1() -> Result<()> {
         let start = Instant::now();
         test(FULL_INPUT, &super::part_1, 7785)?;
         println!("Day 03 part 1 completed in {:?}", start.elapsed());
@@ -67,7 +79,7 @@ mod tests {
     }
 
     #[test]
-    fn part_2_real() -> Result<()> {
+    fn part_2() -> Result<()> {
         let start = Instant::now();
         test(FULL_INPUT, &super::part_2, 2633)?;
         println!("Day 03 part 2 completed in {:?}", start.elapsed());

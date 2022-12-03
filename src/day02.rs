@@ -77,7 +77,7 @@ mod tests {
     }
 
     #[test]
-    fn part_1_real() -> Result<()> {
+    fn part_1() -> Result<()> {
         let start = Instant::now();
         test(FULL_INPUT, &super::part_1, 14069)?;
         println!("Day 02 part 1 completed in {:?}", start.elapsed());
@@ -90,7 +90,7 @@ mod tests {
     }
 
     #[test]
-    fn part_2_real() -> Result<()> {
+    fn part_2() -> Result<()> {
         let start = Instant::now();
         test(FULL_INPUT, &super::part_2, 12411)?;
         println!("Day 02 part 2 completed in {:?}", start.elapsed());
