@@ -66,40 +66,34 @@ fn strategy_two(line: &str) -> i32 {
 mod tests {
     use std::time::Instant;
 
-    use anyhow::Result;
-
     static TEST_INPUT: &str = include_str!("../inputs/day02-test.txt");
     static FULL_INPUT: &str = include_str!("../inputs/day02.txt");
 
     #[test]
-    fn part_1_test() -> Result<()> {
-        test(TEST_INPUT, &super::part_1, 15)
+    fn part_1_test() {
+        let output = super::part_1(TEST_INPUT);
+        assert_eq!(output, 15);
     }
 
     #[test]
-    fn part_1() -> Result<()> {
+    fn part_1() {
         let start = Instant::now();
-        test(FULL_INPUT, &super::part_1, 14069)?;
+        let output = super::part_1(FULL_INPUT);
+        assert_eq!(output, 14069);
         println!("Day 02 part 1 completed in {:?}", start.elapsed());
-        Ok(())
     }
 
     #[test]
-    fn part_2_test() -> Result<()> {
-        test(TEST_INPUT, &super::part_2, 12)
+    fn part_2_test() {
+        let output = super::part_2(TEST_INPUT);
+        assert_eq!(output, 12);
     }
 
     #[test]
-    fn part_2() -> Result<()> {
+    fn part_2() {
         let start = Instant::now();
-        test(FULL_INPUT, &super::part_2, 12411)?;
+        let output = super::part_2(FULL_INPUT);
+        assert_eq!(output, 12411);
         println!("Day 02 part 2 completed in {:?}", start.elapsed());
-        Ok(())
-    }
-
-    fn test(input: &str, function: &dyn Fn(&str) -> i32, expected_val: i32) -> Result<()> {
-        let result = function(input);
-        assert_eq!(result, expected_val);
-        Ok(())
     }
 }

@@ -27,40 +27,34 @@ fn heap_of_calories(input: &str) -> BinaryHeap<i32> {
 mod tests {
     use std::time::Instant;
 
-    use anyhow::Result;
-
     static TEST_INPUT: &str = include_str!("../inputs/day01-test.txt");
     static FULL_INPUT: &str = include_str!("../inputs/day01.txt");
 
     #[test]
-    fn part_1_test() -> Result<()> {
-        test(TEST_INPUT, &super::max_calories, 24000)
+    fn part_1_test() {
+        let output = super::max_calories(TEST_INPUT);
+        assert_eq!(output, 24000);
     }
 
     #[test]
-    fn part_1() -> Result<()> {
+    fn part_1() {
         let start = Instant::now();
-        test(FULL_INPUT, &super::max_calories, 70698)?;
+        let output = super::max_calories(FULL_INPUT);
+        assert_eq!(output, 70698);
         println!("Day 01 part 1 completed in {:?}", start.elapsed());
-        Ok(())
     }
 
     #[test]
-    fn part_2_test() -> Result<()> {
-        test(TEST_INPUT, &super::max_calories_3, 45000)
+    fn part_2_test() {
+        let output = super::max_calories_3(TEST_INPUT);
+        assert_eq!(output, 45000);
     }
 
     #[test]
-    fn part_2() -> Result<()> {
+    fn part_2() {
         let start = Instant::now();
-        test(FULL_INPUT, &super::max_calories_3, 206643)?;
+        let output = super::max_calories_3(FULL_INPUT);
+        assert_eq!(output, 206643);
         println!("Day 01 part 2 completed in {:?}", start.elapsed());
-        Ok(())
-    }
-
-    fn test(input: &str, function: &dyn Fn(&str) -> i32, expected_val: i32) -> Result<()> {
-        let result = function(input);
-        assert_eq!(result, expected_val);
-        Ok(())
     }
 }

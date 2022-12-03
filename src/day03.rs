@@ -55,40 +55,34 @@ impl Priority for char {
 mod tests {
     use std::time::Instant;
 
-    use anyhow::Result;
-
     static TEST_INPUT: &str = include_str!("../inputs/day03-test.txt");
     static FULL_INPUT: &str = include_str!("../inputs/day03.txt");
 
     #[test]
-    fn part_1_test() -> Result<()> {
-        test(TEST_INPUT, &super::part_1, 157)
+    fn part_1_test() {
+        let output = super::part_1(TEST_INPUT);
+        assert_eq!(output, 157);
     }
 
     #[test]
-    fn part_1() -> Result<()> {
+    fn part_1() {
         let start = Instant::now();
-        test(FULL_INPUT, &super::part_1, 7785)?;
+        let output = super::part_1(FULL_INPUT);
+        assert_eq!(output, 7785);
         println!("Day 03 part 1 completed in {:?}", start.elapsed());
-        Ok(())
     }
 
     #[test]
-    fn part_2_test() -> Result<()> {
-        test(TEST_INPUT, &super::part_2, 70)
+    fn part_2_test() {
+        let output = super::part_2(TEST_INPUT);
+        assert_eq!(output, 70);
     }
 
     #[test]
-    fn part_2() -> Result<()> {
+    fn part_2() {
         let start = Instant::now();
-        test(FULL_INPUT, &super::part_2, 2633)?;
+        let output = super::part_2(FULL_INPUT);
+        assert_eq!(output, 2633);
         println!("Day 03 part 2 completed in {:?}", start.elapsed());
-        Ok(())
-    }
-
-    fn test(input: &str, function: &dyn Fn(&str) -> i32, expected_val: i32) -> Result<()> {
-        let result = function(input);
-        assert_eq!(result, expected_val);
-        Ok(())
     }
 }
