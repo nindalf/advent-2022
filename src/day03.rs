@@ -1,28 +1,34 @@
 use std::collections::HashSet;
 
 #[allow(dead_code)]
-fn part_1(input: Vec<String>) -> i32 {
+fn part_1(input: &str) -> i32 {
     input
-        .iter()
+        .lines()
         .map(|backpack| backpack.split_at(backpack.len() / 2))
-        .map(|(first, second)| common_item_priority(&[first.to_string(), second.to_string()]))
+        .map(|(first, second)| common_item_priority(&[first, second]))
         .sum()
 }
 
 #[allow(dead_code)]
-fn part_2(input: Vec<String>) -> i32 {
-    input.chunks(3).map(common_item_priority).sum()
+fn part_2(input: &str) -> i32 {
+    input
+        .lines()
+        .collect::<Vec<_>>()
+        .chunks(3)
+        .map(common_item_priority)
+        .sum()
 }
 
-fn common_item_priority(backpacks: &[String]) -> i32 {
+fn common_item_priority(backpacks: &[&str]) -> i32 {
     assert!(backpacks.len() > 1);
     let first = backpacks.first().unwrap().chars().collect::<HashSet<_>>();
     let intersection = backpacks
         .iter()
         .skip(1)
         .map(|backpack| backpack.chars().collect::<HashSet<_>>())
-        .fold(first, |acc, backpack| {
-            acc.intersection(&backpack).copied().collect::<HashSet<_>>()
+        .fold(first, |mut acc, backpack| {
+            acc.retain(|c| backpack.contains(c));
+            acc
         });
 
     assert_eq!(intersection.len(), 1);
@@ -35,34 +41,40 @@ fn common_item_priority(backpacks: &[String]) -> i32 {
 }
 #[cfg(test)]
 mod tests {
+    use std::time::Instant;
+
     use anyhow::Result;
+
+    static TEST_INPUT: &str = include_str!("../inputs/day03-test.txt");
+    static FULL_INPUT: &str = include_str!("../inputs/day03.txt");
 
     #[test]
     fn part_1_test() -> Result<()> {
-        test("inputs/day03-test.txt", &super::part_1, 157)
+        test(TEST_INPUT, &super::part_1, 157)
     }
 
     #[test]
     fn part_1_real() -> Result<()> {
-        test("inputs/day03.txt", &super::part_1, 7785)
+        let start = Instant::now();
+        test(FULL_INPUT, &super::part_1, 7785)?;
+        println!("Day 03 part 1 completed in {:?}", start.elapsed());
+        Ok(())
     }
 
     #[test]
     fn part_2_test() -> Result<()> {
-        test("inputs/day03-test.txt", &super::part_2, 70)
+        test(TEST_INPUT, &super::part_2, 70)
     }
 
     #[test]
     fn part_2_real() -> Result<()> {
-        test("inputs/day03.txt", &super::part_2, 2633)
+        let start = Instant::now();
+        test(FULL_INPUT, &super::part_2, 2633)?;
+        println!("Day 03 part 2 completed in {:?}", start.elapsed());
+        Ok(())
     }
 
-    fn test(
-        test_file: &str,
-        function: &dyn Fn(Vec<String>) -> i32,
-        expected_val: i32,
-    ) -> Result<()> {
-        let input = crate::files::read_lines(test_file)?;
+    fn test(input: &str, function: &dyn Fn(&str) -> i32, expected_val: i32) -> Result<()> {
         let result = function(input);
         assert_eq!(result, expected_val);
         Ok(())

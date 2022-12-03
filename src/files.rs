@@ -17,10 +17,7 @@ pub fn read_numbers(file_name: &str) -> Result<Vec<i32>, Error> {
 #[allow(dead_code)]
 pub fn read_lines(file_name: &str) -> Result<Vec<String>, Error> {
     let file = std::fs::File::open(file_name)?;
-    Ok(std::io::BufReader::new(file)
-        .lines()
-        .flatten()
-        .collect())
+    Ok(std::io::BufReader::new(file).lines().flatten().collect())
 }
 
 #[allow(dead_code)]

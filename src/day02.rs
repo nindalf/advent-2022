@@ -1,11 +1,11 @@
 #[allow(dead_code)]
-fn part_1(input: Vec<String>) -> i32 {
-    input.iter().map(|line| strategy_one(line)).sum()
+fn part_1(input: &str) -> i32 {
+    input.lines().map(strategy_one).sum()
 }
 
 #[allow(dead_code)]
-fn part_2(input: Vec<String>) -> i32 {
-    input.iter().map(|line| strategy_two(line)).sum()
+fn part_2(input: &str) -> i32 {
+    input.lines().map(strategy_two).sum()
 }
 
 fn strategy_one(line: &str) -> i32 {
@@ -64,34 +64,40 @@ fn strategy_two(line: &str) -> i32 {
 
 #[cfg(test)]
 mod tests {
+    use std::time::Instant;
+
     use anyhow::Result;
+
+    static TEST_INPUT: &str = include_str!("../inputs/day02-test.txt");
+    static FULL_INPUT: &str = include_str!("../inputs/day02.txt");
 
     #[test]
     fn part_1_test() -> Result<()> {
-        test("inputs/day02-test.txt", &super::part_1, 15)
+        test(TEST_INPUT, &super::part_1, 15)
     }
 
     #[test]
     fn part_1_real() -> Result<()> {
-        test("inputs/day02.txt", &super::part_1, 14069)
+        let start = Instant::now();
+        test(FULL_INPUT, &super::part_1, 14069)?;
+        println!("Day 02 part 1 completed in {:?}", start.elapsed());
+        Ok(())
     }
 
     #[test]
     fn part_2_test() -> Result<()> {
-        test("inputs/day02-test.txt", &super::part_2, 12)
+        test(TEST_INPUT, &super::part_2, 12)
     }
 
     #[test]
     fn part_2_real() -> Result<()> {
-        test("inputs/day02.txt", &super::part_2, 12411)
+        let start = Instant::now();
+        test(FULL_INPUT, &super::part_2, 12411)?;
+        println!("Day 02 part 2 completed in {:?}", start.elapsed());
+        Ok(())
     }
 
-    fn test(
-        test_file: &str,
-        function: &dyn Fn(Vec<String>) -> i32,
-        expected_val: i32,
-    ) -> Result<()> {
-        let input = crate::files::read_lines(test_file)?;
+    fn test(input: &str, function: &dyn Fn(&str) -> i32, expected_val: i32) -> Result<()> {
         let result = function(input);
         assert_eq!(result, expected_val);
         Ok(())
