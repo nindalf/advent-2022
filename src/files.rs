@@ -9,7 +9,7 @@ pub fn read_numbers(file_name: &str) -> Result<Vec<i32>, Error> {
     let file = std::fs::File::open(file_name)?;
     Ok(std::io::BufReader::new(file)
         .lines()
-        .filter_map(|line_result| line_result.ok())
+        .flatten()
         .filter_map(|line| line.trim().parse::<i32>().ok())
         .collect())
 }
@@ -19,7 +19,7 @@ pub fn read_lines(file_name: &str) -> Result<Vec<String>, Error> {
     let file = std::fs::File::open(file_name)?;
     Ok(std::io::BufReader::new(file)
         .lines()
-        .filter_map(|line_result| line_result.ok())
+        .flatten()
         .collect())
 }
 
