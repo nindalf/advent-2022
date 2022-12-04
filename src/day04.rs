@@ -2,13 +2,7 @@ use std::{str::FromStr, num::ParseIntError};
 
 #[allow(dead_code)]
 fn part_1(input: &str) -> usize {
-    input.lines()
-        .filter_map(|line| line.split_once(','))
-        .flat_map(|(first, second)| {
-            let first = first.parse::<Range>()?;
-            let second = second.parse::<Range>()?;
-            anyhow::Ok((first, second))
-        })
+    get_ranges(input)
         .filter(|(first, second)| {
             first.contains(second) || second.contains(first)
         })
@@ -17,17 +11,21 @@ fn part_1(input: &str) -> usize {
 
 #[allow(dead_code)]
 fn part_2(input: &str) -> usize {
-    input.lines()
-        .map(|line| {
-            let mut parts = line.split(',');
-            let first: Range = parts.next().unwrap().parse().unwrap();
-            let second: Range = parts.next().unwrap().parse().unwrap();
-            (first, second)
-        })
+    get_ranges(input)
         .filter(|(first, second)| {
             first.overlaps(second) || second.overlaps(first)
         })
         .count()
+}
+
+fn get_ranges(input: &str) -> impl Iterator<Item = (Range, Range)> + '_ {
+    input.lines()
+        .filter_map(|line| line.split_once(','))
+        .flat_map(|(first, second)| {
+            let first = first.parse::<Range>()?;
+            let second = second.parse::<Range>()?;
+            anyhow::Ok((first, second))
+        })
 }
 
 struct Range {
@@ -46,11 +44,19 @@ impl Range {
     }
 }
 
+#[derive(thiserror::Error, Debug)]
+enum ParseRangeError {
+    #[error("not u32")]
+    ParseInt(#[from] ParseIntError),
+    #[error("failed to split at delimiter '-'")]
+    ParseString,
+}
+
 impl FromStr for Range {
-    type Err = ParseIntError;
+    type Err = ParseRangeError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let (first, second) = s.split_once('-').unwrap();
+        let (first, second) = s.split_once('-').ok_or(ParseRangeError::ParseString)?;
 
         let start: u32 = first.parse()?;
         let end: u32 = second.parse()?;
