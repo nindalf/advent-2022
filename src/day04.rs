@@ -10,18 +10,16 @@ fn part_1(input: &str) -> usize {
 #[allow(dead_code)]
 fn part_2(input: &str) -> usize {
     get_ranges(input)
-        .filter(|(first, second)| first.overlaps(second) || second.overlaps(first))
+        .filter(|(first, second)| first.overlaps(second))
         .count()
 }
 
 fn get_ranges(input: &str) -> impl Iterator<Item = (Range, Range)> + '_ {
     input
         .lines()
-        .filter_map(|line| line.split_once(','))
-        .flat_map(|(first, second)| {
-            let first = first.parse::<Range>()?;
-            let second = second.parse::<Range>()?;
-            anyhow::Ok((first, second))
+        .flat_map(|line| scan_fmt::scan_fmt!(line, "{d}-{d},{d}-{d}", u32, u32, u32, u32))
+        .map(|(a, b, x, y)| {
+            (Range{start:a, end: b}, Range{start:x, end: y})
         })
 }
 
