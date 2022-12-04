@@ -1,25 +1,22 @@
-use std::{str::FromStr, num::ParseIntError};
+use std::{num::ParseIntError, str::FromStr};
 
 #[allow(dead_code)]
 fn part_1(input: &str) -> usize {
     get_ranges(input)
-        .filter(|(first, second)| {
-            first.contains(second) || second.contains(first)
-        })
+        .filter(|(first, second)| first.contains(second) || second.contains(first))
         .count()
 }
 
 #[allow(dead_code)]
 fn part_2(input: &str) -> usize {
     get_ranges(input)
-        .filter(|(first, second)| {
-            first.overlaps(second) || second.overlaps(first)
-        })
+        .filter(|(first, second)| first.overlaps(second) || second.overlaps(first))
         .count()
 }
 
 fn get_ranges(input: &str) -> impl Iterator<Item = (Range, Range)> + '_ {
-    input.lines()
+    input
+        .lines()
         .filter_map(|line| line.split_once(','))
         .flat_map(|(first, second)| {
             let first = first.parse::<Range>()?;
@@ -39,7 +36,7 @@ impl Range {
     }
 
     fn overlaps(&self, other: &Range) -> bool {
-        (self.end >= other.start && self.end <= other.start)
+        (self.end >= other.start && self.end <= other.end)
             || (self.start >= other.start && self.start <= other.end)
     }
 }
@@ -61,7 +58,7 @@ impl FromStr for Range {
         let start: u32 = first.parse()?;
         let end: u32 = second.parse()?;
 
-        Ok(Range{start, end})
+        Ok(Range { start, end })
     }
 }
 
@@ -99,5 +96,4 @@ mod tests {
         assert_eq!(output, 870);
         println!("Day 04 part 2 completed in {:?}", start.elapsed());
     }
-
 }
