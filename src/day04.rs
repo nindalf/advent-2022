@@ -18,9 +18,7 @@ fn get_ranges(input: &str) -> impl Iterator<Item = (Range, Range)> + '_ {
     input
         .lines()
         .flat_map(|line| scan_fmt::scan_fmt!(line, "{d}-{d},{d}-{d}", u32, u32, u32, u32))
-        .map(|(a, b, x, y)| {
-            (Range{start:a, end: b}, Range{start:x, end: y})
-        })
+        .map(|(a, b, x, y)| (Range { start: a, end: b }, Range { start: x, end: y }))
 }
 
 struct Range {
@@ -36,6 +34,7 @@ impl Range {
     fn overlaps(&self, other: &Range) -> bool {
         (self.end >= other.start && self.end <= other.end)
             || (self.start >= other.start && self.start <= other.end)
+            || self.contains(other)
     }
 }
 
