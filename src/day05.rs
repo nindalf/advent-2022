@@ -11,11 +11,8 @@ fn part_1(input: &str) -> String {
             }
         }
     }
-    
-    towers
-        .iter()
-        .filter_map(|tower| tower.last())
-        .collect::<String>()
+
+    towers.iter().filter_map(|tower| tower.last()).collect()
 }
 
 #[allow(dead_code)]
@@ -29,14 +26,11 @@ fn part_2(input: &str) -> String {
         towers[instruction.destination].extend(to_move);
     }
 
-    towers
-        .iter()
-        .filter_map(|tower| tower.last())
-        .collect::<String>()
+    towers.iter().filter_map(|tower| tower.last()).collect()
 }
 
 fn get_towers(crates: &str) -> Vec<Vec<char>> {
-    let num_towers = (crates.lines().next().unwrap().len() / 4) + 1;
+    let num_towers = (crates.lines().next().unwrap().len() + 1) / 4;
     let mut towers: Vec<Vec<char>> = vec![Vec::new(); num_towers];
     for line in crates.lines().rev() {
         for (i, c) in line.chars().enumerate() {
