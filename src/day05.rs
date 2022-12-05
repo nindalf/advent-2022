@@ -1,9 +1,9 @@
 #[allow(dead_code)]
 fn part_1(input: &str) -> String {
-    let (crates, instructions) = input.split_once("\n\n").unwrap_or_default();
+    let (crates, raw_instructions) = input.split_once("\n\n").unwrap_or_default();
     let mut towers = get_towers(crates);
-    let instructions = get_instructions(instructions);
-    for instruction in instructions {
+
+    for instruction in get_instructions(raw_instructions) {
         for _ in 0..instruction.n {
             match towers[instruction.origin].pop() {
                 Some(popped) => towers[instruction.destination].push(popped),
@@ -11,6 +11,7 @@ fn part_1(input: &str) -> String {
             }
         }
     }
+    
     towers
         .iter()
         .filter_map(|tower| tower.last())
@@ -19,21 +20,15 @@ fn part_1(input: &str) -> String {
 
 #[allow(dead_code)]
 fn part_2(input: &str) -> String {
-    let (crates, instructions) = input.split_once("\n\n").unwrap_or_default();
+    let (crates, raw_instructions) = input.split_once("\n\n").unwrap_or_default();
     let mut towers = get_towers(crates);
-    let instructions = get_instructions(instructions);
-    for instruction in instructions {
-        let mut temp = vec![];
-        for _ in 0..instruction.n {
-            match towers[instruction.origin].pop() {
-                Some(popped) => temp.push(popped),
-                None => panic!("Attempted to pop from an empty tower"),
-            }
-        }
-        for c in temp.iter().rev() {
-            towers[instruction.destination].push(*c);
-        }
+
+    for instruction in get_instructions(raw_instructions) {
+        let origin_length = towers[instruction.origin].len();
+        let to_move = towers[instruction.origin].split_off(origin_length - instruction.n);
+        towers[instruction.destination].extend(to_move);
     }
+
     towers
         .iter()
         .filter_map(|tower| tower.last())
