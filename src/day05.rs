@@ -2,46 +2,52 @@
 fn part_1(input: &str) -> String {
     let (crates, instructions) = input.split_once("\n\n").unwrap_or_default();
     let mut towers = get_towers(crates);
-    for line in instructions.lines() {
-        let (n, origin, destination) = scan_fmt::scan_fmt!(line, "move {d} from {d} to {d}", usize, usize, usize).unwrap();
-        for _ in 0 .. n {
-            match towers[origin].pop() {
-                Some(popped) => towers[destination].push(popped),
+    let instructions = get_instructions(instructions);
+    for instruction in instructions {
+        for _ in 0..instruction.n {
+            match towers[instruction.origin].pop() {
+                Some(popped) => towers[instruction.destination].push(popped),
                 None => panic!("Attempted to pop from an empty tower"),
             }
         }
     }
-    towers.iter().skip(1).filter_map(|tower| tower.last()).collect::<String>()
+    towers
+        .iter()
+        .filter_map(|tower| tower.last())
+        .collect::<String>()
 }
 
 #[allow(dead_code)]
 fn part_2(input: &str) -> String {
     let (crates, instructions) = input.split_once("\n\n").unwrap_or_default();
     let mut towers = get_towers(crates);
-    for line in instructions.lines() {
-        let (n, origin, destination) = scan_fmt::scan_fmt!(line, "move {d} from {d} to {d}", usize, usize, usize).unwrap();
+    let instructions = get_instructions(instructions);
+    for instruction in instructions {
         let mut temp = vec![];
-        for _ in 0 .. n {
-            match towers[origin].pop() {
+        for _ in 0..instruction.n {
+            match towers[instruction.origin].pop() {
                 Some(popped) => temp.push(popped),
                 None => panic!("Attempted to pop from an empty tower"),
             }
         }
         for c in temp.iter().rev() {
-            towers[destination].push(*c);
+            towers[instruction.destination].push(*c);
         }
     }
-    towers.iter().skip(1).filter_map(|tower| tower.last()).collect::<String>()
+    towers
+        .iter()
+        .filter_map(|tower| tower.last())
+        .collect::<String>()
 }
 
 fn get_towers(crates: &str) -> Vec<Vec<char>> {
-    let num_towers = (crates.lines().next().unwrap().len() / 4) + 2;
+    let num_towers = (crates.lines().next().unwrap().len() / 4) + 1;
     let mut towers: Vec<Vec<char>> = vec![Vec::new(); num_towers];
     for line in crates.lines().rev() {
         for (i, c) in line.chars().enumerate() {
             match c {
-                'A' ..= 'Z' => {
-                    let tower_id = ((i-1)/4) + 1;
+                'A'..='Z' => {
+                    let tower_id = (i - 1) / 4;
                     towers[tower_id].push(c);
                 }
                 _ => continue,
@@ -49,6 +55,23 @@ fn get_towers(crates: &str) -> Vec<Vec<char>> {
         }
     }
     towers
+}
+
+struct Instruction {
+    n: usize,
+    origin: usize,
+    destination: usize,
+}
+
+fn get_instructions(input: &str) -> impl Iterator<Item = Instruction> + '_ {
+    input
+        .lines()
+        .flat_map(|line| scan_fmt::scan_fmt!(line, "move {d} from {d} to {d}", usize, usize, usize))
+        .map(|(n, origin, destination)| Instruction {
+            n,
+            origin: origin - 1,
+            destination: destination - 1,
+        })
 }
 
 #[cfg(test)]
@@ -85,5 +108,4 @@ mod tests {
         assert_eq!(output, "TDGJQTZSL");
         println!("Day 05 part 2 completed in {:?}", start.elapsed());
     }
-
 }
