@@ -1,62 +1,53 @@
 #[allow(dead_code)]
 fn part_1(input: &str) -> String {
-    let (crates, instructions) = input.split_once("\n\n").unwrap();
+    let (crates, instructions) = input.split_once("\n\n").unwrap_or_default();
     let mut towers = get_towers(crates);
     for line in instructions.lines() {
-        let (n, origin, destination) = scan_fmt::scan_fmt!(line, "move {d} from {d} to {d}", u32, usize, usize).unwrap();
+        let (n, origin, destination) = scan_fmt::scan_fmt!(line, "move {d} from {d} to {d}", usize, usize, usize).unwrap();
         for _ in 0 .. n {
-            let x = towers[origin].pop().unwrap();
-            towers[destination].push(x);
+            match towers[origin].pop() {
+                Some(popped) => towers[destination].push(popped),
+                None => panic!("Attempted to pop from an empty tower"),
+            }
         }
     }
-    let result = towers.iter().skip(1).filter_map(|tower| tower.last()).collect::<String>();
-    result
+    towers.iter().skip(1).filter_map(|tower| tower.last()).collect::<String>()
 }
 
 #[allow(dead_code)]
 fn part_2(input: &str) -> String {
-    let (crates, instructions) = input.split_once("\n\n").unwrap();
+    let (crates, instructions) = input.split_once("\n\n").unwrap_or_default();
     let mut towers = get_towers(crates);
     for line in instructions.lines() {
         let (n, origin, destination) = scan_fmt::scan_fmt!(line, "move {d} from {d} to {d}", usize, usize, usize).unwrap();
         let mut temp = vec![];
         for _ in 0 .. n {
-            let x = towers[origin].pop().unwrap();
-            temp.push(x);
+            match towers[origin].pop() {
+                Some(popped) => temp.push(popped),
+                None => panic!("Attempted to pop from an empty tower"),
+            }
         }
         for c in temp.iter().rev() {
             towers[destination].push(*c);
         }
     }
-    let result = towers.iter().skip(1).filter_map(|tower| tower.last()).collect::<String>();
-    result
+    towers.iter().skip(1).filter_map(|tower| tower.last()).collect::<String>()
 }
 
 fn get_towers(crates: &str) -> Vec<Vec<char>> {
-    let mut towers: Vec<Vec<char>> = vec![Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),];
-    for line in crates.lines() {
+    let num_towers = (crates.lines().next().unwrap().len() / 4) + 2;
+    let mut towers: Vec<Vec<char>> = vec![Vec::new(); num_towers];
+    for line in crates.lines().rev() {
         for (i, c) in line.chars().enumerate() {
             match c {
                 'A' ..= 'Z' => {
-                    let tower_id = match i {
-                        1 => 1, // 1 => 0
-                        5 => 2, // 5 => 1
-                        9 => 3, // 9 => 2
-                        13 => 4, // 13 => 3
-                        17 => 5,
-                        21 => 6,
-                        25 => 7,
-                        29 => 8,
-                        33 => 9,
-                        _ => panic!("Unsupported index"),
-                    };
+                    let tower_id = ((i-1)/4) + 1;
                     towers[tower_id].push(c);
                 }
                 _ => continue,
             }
         }
     }
-    towers = towers.iter().map(|tower| tower.iter().copied().rev().collect::<Vec<char>>()).collect::<Vec<Vec<char>>>();
     towers
 }
 
