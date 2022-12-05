@@ -46,7 +46,7 @@ impl Priority for char {
         match self {
             c @ 'a'..='z' => (c as i32 - 'a' as i32) + 1,
             c @ 'A'..='Z' => (c as i32 - 'A' as i32) + 27,
-            c @ _ => panic!("Cannot compute priority for {c}"),
+            c => panic!("Cannot compute priority for {c}"),
         }
     }
 }
