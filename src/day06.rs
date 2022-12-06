@@ -1,5 +1,3 @@
-use std::collections::HashSet;
-
 #[allow(dead_code)]
 fn part_1(input: &str) -> usize {
     find_first_window_with_unique_chars(input, 4)
@@ -12,19 +10,15 @@ fn part_2(input: &str) -> usize {
 
 fn find_first_window_with_unique_chars(input: &str, window_size: usize) -> usize {
     input
-        .chars()
-        .collect::<Vec<char>>()
+        .as_bytes()
         .windows(window_size)
-        .enumerate()
-        .filter_map(|(i, x)| {
-            let set = x.iter().collect::<HashSet<_>>();
-            if set.len() == window_size {
-                return Some(i + window_size);
-            }
-            None
+        .position(|x| {
+            let mut chars = x.to_vec();
+            chars.sort();
+            chars.dedup();
+            chars.len() == window_size
         })
-        .next()
-        .unwrap()
+        .unwrap() + window_size
 }
 
 #[cfg(test)]
