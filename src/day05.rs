@@ -30,7 +30,10 @@ fn part_2(input: &str) -> String {
 }
 
 fn get_towers(crates: &str) -> Vec<Vec<char>> {
-    let num_towers = (crates.lines().next().unwrap().len() + 1) / 4;
+    let num_towers = match crates.lines().next() {
+        Some(line) => (line.len() + 1) / 4,
+        None => 0,
+    };
     let mut towers: Vec<Vec<char>> = vec![Vec::new(); num_towers];
     for line in crates.lines().rev() {
         for (i, c) in line.chars().enumerate() {
