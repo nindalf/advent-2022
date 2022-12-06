@@ -2,33 +2,22 @@ use std::collections::HashSet;
 
 #[allow(dead_code)]
 fn part_1(input: &str) -> usize {
-    let window_size = 4;
-    input
-        .chars()
-        .collect::<Vec<char>>()
-        .windows(window_size)
-        .enumerate()
-        .filter_map(|(i, x)| {
-            let set = x.iter().copied().collect::<HashSet<char>>();
-            if set.len() == window_size {
-                return Some(i + window_size);
-            }
-            None
-        })
-        .next()
-        .unwrap()
+    find_first_window_with_unique_chars(input, 4)
 }
 
 #[allow(dead_code)]
 fn part_2(input: &str) -> usize {
-    let window_size = 14;
+    find_first_window_with_unique_chars(input, 14)
+}
+
+fn find_first_window_with_unique_chars(input: &str, window_size: usize) -> usize {
     input
         .chars()
         .collect::<Vec<char>>()
         .windows(window_size)
         .enumerate()
         .filter_map(|(i, x)| {
-            let set = x.iter().copied().collect::<HashSet<char>>();
+            let set = x.iter().collect::<HashSet<_>>();
             if set.len() == window_size {
                 return Some(i + window_size);
             }
