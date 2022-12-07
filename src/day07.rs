@@ -17,6 +17,18 @@ enum CommandLineIO {
     File(u64, String),
 }
 
+/*
+- Just wanted to write down my thoughts about solving this.
+- Initial implementation stored state in multiple HashMaps - directory contents, file sizes, directory sizes
+- Final calculations done on the directory sizes HashMap
+- This didn't feel clean to me because surely this should just be a tree.
+- Where it gets complicated is that it makes the final calculations harder. 
+- Those are quick and easy if we have a map of directory name to size.
+- I can still do it. Generate a tree, and then a separate map for directory sizes.
+- Meanwhile, despite spending a lot of time on the parser, I'm not happy with. 
+- Ideally the contents of LS should be parsed as a result of the LS command.
+ */
+
 #[allow(dead_code)]
 fn part_1(input: &str) -> u64 {
     let commands = Commands { inner: input };
