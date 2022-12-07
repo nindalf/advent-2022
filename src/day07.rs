@@ -40,7 +40,8 @@ fn part_2(input: &str) -> u64 {
     *directory_sizes
         .values()
         .filter(|value| **value >= minimum_deletion)
-        .min().unwrap()
+        .min()
+        .unwrap()
 }
 
 fn all_directory_sizes(commands: Commands) -> HashMap<String, u64> {
@@ -48,36 +49,28 @@ fn all_directory_sizes(commands: Commands) -> HashMap<String, u64> {
     let mut file_sizes = HashMap::new();
     let mut directory_contents = HashMap::new();
     for command in commands {
-        match command {
-            CommandLineIO::CD(destination) => {
-                match destination.as_ref() {
-                    ".." => {
-                        directory_stack.pop();
-                    }
-                    dir => {
-                        directory_stack.push(dir.to_owned());
-                    }
-                };
-            }
-            CommandLineIO::LS => {}
-            CommandLineIO::Directory(dir) => {
-                let current_directory = directory_stack.join("/");
-                let full_name = format!("{}/{}", current_directory, dir);
-                directory_contents
-                    .entry(current_directory)
-                    .or_insert_with(|| HashSet::new())
-                    .insert(full_name);
-            }
-            CommandLineIO::File(size, name) => {
-                let current_directory = directory_stack.join("/");
-                let full_name = format!("{}/{}", current_directory, name);
-                directory_contents
-                    .entry(current_directory)
-                    .or_insert_with(|| HashSet::new())
-                    .insert(full_name.clone());
-                file_sizes.insert(full_name, size);
+        if let CommandLineIO::CD(destination) = &command {
+            match destination.as_ref() {
+                ".." => {
+                    directory_stack.pop();
+                }
+                dir => {
+                    directory_stack.push(dir.to_owned());
+                }
+            };
+        }
+        if let CommandLineIO::Directory(name) | CommandLineIO::File(_, name) = &command {
+            let current_directory = directory_stack.join("/");
+            let full_name = format!("{}/{}", current_directory, name);
+            directory_contents
+                .entry(current_directory)
+                .or_insert_with(HashSet::new)
+                .insert(full_name.clone());
+            if let CommandLineIO::File(size, _) = &command {
+                file_sizes.insert(full_name, *size);
             }
         }
+        // CommandLineIO::LS doesn't need to be handled
     }
     let mut directory_sizes = HashMap::new();
     directory_size("/", &mut directory_sizes, &directory_contents, &file_sizes);
@@ -92,12 +85,12 @@ fn directory_size(
 ) -> u64 {
     let mut result = 0;
     for content in directory_contents.get(directory).unwrap() {
-        if file_sizes.contains_key(content) {
-            result += file_sizes.get(content).unwrap();
+        if let Some(file_size) = file_sizes.get(content) {
+            result += file_size;
             continue;
         }
-        if directory_sizes.contains_key(content) {
-            result += directory_sizes.get(content).unwrap();
+        if let Some(directory_size) = directory_sizes.get(content) {
+            result += directory_size;
             continue;
         }
         // is directory, unknown size so recurse
