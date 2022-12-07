@@ -5,16 +5,21 @@ use nom::{
     bytes::complete::{tag, take_until},
     character::complete::{alpha1, multispace1, newline},
     combinator::map,
-    sequence::{delimited, pair, separated_pair, terminated},
+    multi::fold_many0,
+    sequence::{delimited, preceded, separated_pair, terminated},
     IResult,
 };
 
 #[derive(Debug)]
-enum CommandLineIO {
+enum CliCommand {
     CD(String),
-    LS,
+    LS(Vec<DirContent>),
+}
+
+#[derive(Debug)]
+enum DirContent {
     Directory(String),
-    File(u64, String),
+    File(String, u64),
 }
 
 /*
@@ -22,11 +27,12 @@ enum CommandLineIO {
 - Initial implementation stored state in multiple HashMaps - directory contents, file sizes, directory sizes
 - Final calculations done on the directory sizes HashMap
 - This didn't feel clean to me because surely this should just be a tree.
-- Where it gets complicated is that it makes the final calculations harder. 
+- Where it gets complicated is that it makes the final calculations harder.
 - Those are quick and easy if we have a map of directory name to size.
 - I can still do it. Generate a tree, and then a separate map for directory sizes.
-- Meanwhile, despite spending a lot of time on the parser, I'm not happy with. 
-- Ideally the contents of LS should be parsed as a result of the LS command.
+- Meanwhile, despite spending a lot of time on the parser, I'm not happy with.
+- Ideally the contents of LS should be parsed as a result of the LS command. (This is now complete)
+- It's possible that a future day's challenge involves add support for another CLI command. In that unlikely event, I'm prepared!
  */
 
 #[allow(dead_code)]
@@ -61,28 +67,40 @@ fn all_directory_sizes(commands: Commands) -> HashMap<String, u64> {
     let mut file_sizes = HashMap::new();
     let mut directory_contents = HashMap::new();
     for command in commands {
-        if let CommandLineIO::CD(destination) = &command {
-            match destination.as_ref() {
+        match &command {
+            CliCommand::CD(destination) => match destination.as_ref() {
                 ".." => {
                     directory_stack.pop();
                 }
                 dir => {
                     directory_stack.push(dir.to_owned());
                 }
-            };
-        }
-        if let CommandLineIO::Directory(name) | CommandLineIO::File(_, name) = &command {
-            let current_directory = directory_stack.join("/");
-            let full_name = format!("{}/{}", current_directory, name);
-            directory_contents
-                .entry(current_directory)
-                .or_insert_with(HashSet::new)
-                .insert(full_name.clone());
-            if let CommandLineIO::File(size, _) = &command {
-                file_sizes.insert(full_name, *size);
+            },
+            CliCommand::LS(dir_content) => {
+                for content in dir_content {
+                    match content {
+                        DirContent::Directory(name) => {
+                            let current_directory = directory_stack.join("/");
+                            let full_name = format!("{}/{}", current_directory, name);
+                            directory_contents
+                                .entry(current_directory)
+                                .or_insert_with(HashSet::new)
+                                .insert(full_name.clone());
+                        }
+                        DirContent::File(name, size) => {
+                            let current_directory = directory_stack.join("/");
+                            let full_name = format!("{}/{}", current_directory, name);
+                            directory_contents
+                                .entry(current_directory)
+                                .or_insert_with(HashSet::new)
+                                .insert(full_name.clone());
+
+                            file_sizes.insert(full_name, *size);
+                        }
+                    }
+                }
             }
-        }
-        // CommandLineIO::LS doesn't need to be handled
+        };
     }
     let mut directory_sizes = HashMap::new();
     directory_size("/", &mut directory_sizes, &directory_contents, &file_sizes);
@@ -117,7 +135,7 @@ struct Commands<'a> {
 }
 
 impl<'a> Iterator for Commands<'a> {
-    type Item = CommandLineIO;
+    type Item = CliCommand;
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.inner.is_empty() {
@@ -133,34 +151,43 @@ impl<'a> Iterator for Commands<'a> {
     }
 }
 
-fn next_command(input: &str) -> IResult<&str, CommandLineIO> {
-    alt((cd, ls, directory, file))(input)
+fn next_command(input: &str) -> IResult<&str, CliCommand> {
+    alt((cd, ls))(input)
 }
 
-fn cd(input: &str) -> IResult<&str, CommandLineIO> {
+fn cd(input: &str) -> IResult<&str, CliCommand> {
     map(
         delimited(tag("$ cd "), alt((tag(".."), tag("/"), alpha1)), newline),
-        |s: &str| CommandLineIO::CD(s.to_string()),
+        |s: &str| CliCommand::CD(s.to_string()),
     )(input)
 }
 
-fn ls(input: &str) -> IResult<&str, CommandLineIO> {
-    map(pair(tag("$ ls"), newline), |_| CommandLineIO::LS)(input)
+fn ls(input: &str) -> IResult<&str, CliCommand> {
+    map(
+        preceded(
+            tag("$ ls\n"),
+            fold_many0(alt((directory, file)), Vec::new, |mut acc: Vec<_>, item| {
+                acc.push(item);
+                acc
+            }),
+        ),
+        CliCommand::LS,
+    )(input)
 }
 
-fn directory(input: &str) -> IResult<&str, CommandLineIO> {
+fn directory(input: &str) -> IResult<&str, DirContent> {
     map(delimited(tag("dir "), alpha1, newline), |s: &str| {
-        CommandLineIO::Directory(s.to_string())
+        DirContent::Directory(s.to_string())
     })(input)
 }
 
-fn file(input: &str) -> IResult<&str, CommandLineIO> {
+fn file(input: &str) -> IResult<&str, DirContent> {
     map(
         terminated(
             separated_pair(nom::character::complete::u64, multispace1, take_until("\n")),
             newline,
         ),
-        |(size, name): (u64, &str)| CommandLineIO::File(size, name.to_string()),
+        |(size, name): (u64, &str)| DirContent::File(name.to_string(), size),
     )(input)
 }
 
