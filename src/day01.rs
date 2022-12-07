@@ -1,13 +1,13 @@
 use std::collections::BinaryHeap;
 
-#[allow(dead_code)]
-fn max_calories(input: &str) -> i32 {
+#[inline]
+pub fn max_calories(input: &str) -> i32 {
     let mut heap = heap_of_calories(input);
     heap.pop().unwrap_or_default()
 }
 
-#[allow(dead_code)]
-fn max_calories_3(input: &str) -> i32 {
+#[inline]
+pub fn max_calories_3(input: &str) -> i32 {
     let mut heap = heap_of_calories(input);
     heap.pop().unwrap_or_default() + heap.pop().unwrap_or_default() + heap.pop().unwrap_or_default()
 }

@@ -18,7 +18,8 @@ fn find_first_window_with_unique_chars(input: &str, window_size: usize) -> usize
             chars.dedup();
             chars.len() == window_size
         })
-        .unwrap() + window_size
+        .unwrap()
+        + window_size
 }
 
 #[cfg(test)]
