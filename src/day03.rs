@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
-#[allow(dead_code)]
-fn part_1(input: &str) -> i32 {
+#[inline]
+pub fn part_1(input: &str) -> i32 {
     input
         .lines()
         .map(|backpack| backpack.split_at(backpack.len() / 2))
@@ -10,8 +10,8 @@ fn part_1(input: &str) -> i32 {
         .sum()
 }
 
-#[allow(dead_code)]
-fn part_2(input: &str) -> i32 {
+#[inline]
+pub fn part_2(input: &str) -> i32 {
     input
         .lines()
         .collect::<Vec<_>>()
@@ -53,8 +53,6 @@ impl Priority for char {
 
 #[cfg(test)]
 mod tests {
-    use std::time::Instant;
-
     static TEST_INPUT: &str = include_str!("../inputs/day03-test.txt");
     static FULL_INPUT: &str = include_str!("../inputs/day03.txt");
 
@@ -66,10 +64,8 @@ mod tests {
 
     #[test]
     fn part_1() {
-        let start = Instant::now();
         let output = super::part_1(FULL_INPUT);
         assert_eq!(output, 7785);
-        println!("Day 03 part 1 completed in {:?}", start.elapsed());
     }
 
     #[test]
@@ -79,10 +75,8 @@ mod tests {
     }
 
     #[test]
-    fn part_2() {
-        let start = Instant::now();
+    pub fn part_2() {
         let output = super::part_2(FULL_INPUT);
         assert_eq!(output, 2633);
-        println!("Day 03 part 2 completed in {:?}", start.elapsed());
     }
 }

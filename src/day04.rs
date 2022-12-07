@@ -1,14 +1,14 @@
 use std::{num::ParseIntError, str::FromStr};
 
-#[allow(dead_code)]
-fn part_1(input: &str) -> usize {
+#[inline]
+pub fn part_1(input: &str) -> usize {
     get_ranges(input)
         .filter(|(first, second)| first.contains(second) || second.contains(first))
         .count()
 }
 
-#[allow(dead_code)]
-fn part_2(input: &str) -> usize {
+#[inline]
+pub fn part_2(input: &str) -> usize {
     get_ranges(input)
         .filter(|(first, second)| first.overlaps(second))
         .count()
@@ -61,8 +61,6 @@ impl FromStr for Range {
 
 #[cfg(test)]
 mod tests {
-    use std::time::Instant;
-
     static TEST_INPUT: &str = include_str!("../inputs/day04-test.txt");
     static FULL_INPUT: &str = include_str!("../inputs/day04.txt");
 
@@ -74,10 +72,8 @@ mod tests {
 
     #[test]
     fn part_1() {
-        let start = Instant::now();
         let output = super::part_1(FULL_INPUT);
         assert_eq!(output, 509);
-        println!("Day 04 part 1 completed in {:?}", start.elapsed());
     }
 
     #[test]
@@ -87,10 +83,8 @@ mod tests {
     }
 
     #[test]
-    fn part_2() {
-        let start = Instant::now();
+    pub fn part_2() {
         let output = super::part_2(FULL_INPUT);
         assert_eq!(output, 870);
-        println!("Day 04 part 2 completed in {:?}", start.elapsed());
     }
 }

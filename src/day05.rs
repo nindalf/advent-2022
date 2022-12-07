@@ -1,5 +1,5 @@
-#[allow(dead_code)]
-fn part_1(input: &str) -> String {
+#[inline]
+pub fn part_1(input: &str) -> String {
     let (crates, raw_instructions) = input.split_once("\n\n").unwrap_or_default();
     let mut towers = get_towers(crates);
 
@@ -15,8 +15,8 @@ fn part_1(input: &str) -> String {
     towers.iter().filter_map(|tower| tower.last()).collect()
 }
 
-#[allow(dead_code)]
-fn part_2(input: &str) -> String {
+#[inline]
+pub fn part_2(input: &str) -> String {
     let (crates, raw_instructions) = input.split_once("\n\n").unwrap_or_default();
     let mut towers = get_towers(crates);
 
@@ -68,8 +68,6 @@ fn get_instructions(input: &str) -> impl Iterator<Item = Instruction> + '_ {
 
 #[cfg(test)]
 mod tests {
-    use std::time::Instant;
-
     static TEST_INPUT: &str = include_str!("../inputs/day05-test.txt");
     static FULL_INPUT: &str = include_str!("../inputs/day05.txt");
 
@@ -81,10 +79,8 @@ mod tests {
 
     #[test]
     fn part_1() {
-        let start = Instant::now();
         let output = super::part_1(FULL_INPUT);
         assert_eq!(output, "BZLVHBWQF");
-        println!("Day 05 part 1 completed in {:?}", start.elapsed());
     }
 
     #[test]
@@ -94,10 +90,8 @@ mod tests {
     }
 
     #[test]
-    fn part_2() {
-        let start = Instant::now();
+    pub fn part_2() {
         let output = super::part_2(FULL_INPUT);
         assert_eq!(output, "TDGJQTZSL");
-        println!("Day 05 part 2 completed in {:?}", start.elapsed());
     }
 }

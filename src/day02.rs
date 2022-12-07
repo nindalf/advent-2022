@@ -1,10 +1,10 @@
-#[allow(dead_code)]
-fn part_1(input: &str) -> i32 {
+#[inline]
+pub fn part_1(input: &str) -> i32 {
     input.lines().map(strategy_one).sum()
 }
 
-#[allow(dead_code)]
-fn part_2(input: &str) -> i32 {
+#[inline]
+pub fn part_2(input: &str) -> i32 {
     input.lines().map(strategy_two).sum()
 }
 
@@ -64,8 +64,6 @@ fn strategy_two(line: &str) -> i32 {
 
 #[cfg(test)]
 mod tests {
-    use std::time::Instant;
-
     static TEST_INPUT: &str = include_str!("../inputs/day02-test.txt");
     static FULL_INPUT: &str = include_str!("../inputs/day02.txt");
 
@@ -77,10 +75,8 @@ mod tests {
 
     #[test]
     fn part_1() {
-        let start = Instant::now();
         let output = super::part_1(FULL_INPUT);
         assert_eq!(output, 14069);
-        println!("Day 02 part 1 completed in {:?}", start.elapsed());
     }
 
     #[test]
@@ -90,10 +86,8 @@ mod tests {
     }
 
     #[test]
-    fn part_2() {
-        let start = Instant::now();
+    pub fn part_2() {
         let output = super::part_2(FULL_INPUT);
         assert_eq!(output, 12411);
-        println!("Day 02 part 2 completed in {:?}", start.elapsed());
     }
 }

@@ -35,8 +35,8 @@ enum DirContent {
 - It's possible that a future day's challenge involves add support for another CLI command. In that unlikely event, I'm prepared!
  */
 
-#[allow(dead_code)]
-fn part_1(input: &str) -> u64 {
+#[inline]
+pub fn part_1(input: &str) -> u64 {
     let commands = Commands { inner: input };
     let directory_sizes = all_directory_sizes(commands);
 
@@ -46,8 +46,8 @@ fn part_1(input: &str) -> u64 {
         .sum()
 }
 
-#[allow(dead_code)]
-fn part_2(input: &str) -> u64 {
+#[inline]
+pub fn part_2(input: &str) -> u64 {
     let commands = Commands { inner: input };
     let directory_sizes = all_directory_sizes(commands);
 
@@ -193,7 +193,6 @@ fn file(input: &str) -> IResult<&str, DirContent> {
 
 #[cfg(test)]
 mod tests {
-    use std::time::Instant;
 
     static TEST_INPUT: &str = include_str!("../inputs/day07-test.txt");
     static FULL_INPUT: &str = include_str!("../inputs/day07.txt");
@@ -206,10 +205,8 @@ mod tests {
 
     #[test]
     fn part_1() {
-        let start = Instant::now();
         let output = super::part_1(FULL_INPUT);
         assert_eq!(output, 1723892);
-        println!("Day 07 part 1 completed in {:?}", start.elapsed());
     }
 
     #[test]
@@ -219,10 +216,8 @@ mod tests {
     }
 
     #[test]
-    fn part_2() {
-        let start = Instant::now();
+    pub fn part_2() {
         let output = super::part_2(FULL_INPUT);
         assert_eq!(output, 8474158);
-        println!("Day 07 part 2 completed in {:?}", start.elapsed());
     }
 }
