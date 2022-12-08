@@ -3,60 +3,42 @@ use crate::matrix::{Matrix, Point};
 #[inline]
 pub fn part_1(input: &str) -> usize {
     let matrix = Matrix::new(input);
-    println!("{}", matrix);
     let mut trees = vec![Tree::default(); matrix.len()];
 
-    for x in 0..matrix.max_x {
-        let point = Point{x, y: 0};
-        trees[matrix.idx(&point)].visible_from_left = true;
-        let mut max_so_far = matrix.value(&point).unwrap();
-        for y in 0 .. matrix.max_y {
-            let point = Point{x, y};
-            let value = matrix.value(&point).unwrap();
-            if max_so_far < value {
-                max_so_far = value;
-                println!("Set {}, {} to true", x, y);
-                trees[matrix.idx(&point)].visible_from_left = true;
+    for point in matrix.all_points() {
+        let tree_idx = matrix.idx(&point);
+        trees[tree_idx].visible_from_right = true;
+        for x in point.x+1 .. matrix.max_x {
+            let new_point = Point{x, y: point.y};
+            if matrix.value(&new_point) >= matrix.value(&point) {
+                trees[tree_idx].visible_from_right = false;
             }
         }
-    }
-    for x in (0..matrix.max_x) {
-        let point = Point{x, y: matrix.max_y-1};
-        trees[matrix.idx(&point)].visible_from_right = true;
-        let mut max_so_far = matrix.value(&point).unwrap();
-        for y in (0 .. matrix.max_y).rev() {
-            let point = Point{x, y};
-            let value = matrix.value(&point).unwrap();
-            if max_so_far < value {
-                max_so_far = value;
-                println!("Set {}, {} to visible from right", x, y);
-                trees[matrix.idx(&point)].visible_from_right = true;
+
+        trees[tree_idx].visible_from_left = true;
+        for x in (0 .. point.x).rev() {
+            let new_point = Point{x, y: point.y};
+            if matrix.value(&new_point) >= matrix.value(&point) {
+                trees[tree_idx].visible_from_left = false;
+                break
             }
         }
-    }
-    for y in 0..matrix.max_y {
-        let point = Point{x:0, y};
-        trees[matrix.idx(&point)].visible_from_top = true;
-        let mut max_so_far = matrix.value(&point).unwrap();
-        for x in 0 .. matrix.max_x {
-            let point = Point{x, y};
-            let value = matrix.value(&point).unwrap();
-            if max_so_far < value {
-                max_so_far = value;
-                trees[matrix.idx(&point)].visible_from_top = true;
+
+        trees[tree_idx].visible_from_bottom = true;
+        for y in point.y+1 .. matrix.max_y {
+            let new_point = Point{x: point.x, y};
+            if matrix.value(&new_point) >= matrix.value(&point) {
+                trees[tree_idx].visible_from_bottom = false;
+                break
             }
         }
-    }
-    for y in (0..matrix.max_y) {
-        let point = Point{x:matrix.max_x-1, y};
-        trees[matrix.idx(&point)].visible_from_bottom = true;
-        let mut max_so_far = matrix.value(&point).unwrap();
-        for x in (0 .. matrix.max_x).rev() {
-            let point = Point{x, y};
-            let value = matrix.value(&point).unwrap();
-            if max_so_far < value {
-                max_so_far = value;
-                trees[matrix.idx(&point)].visible_from_bottom = true;
+
+        trees[tree_idx].visible_from_top = true;
+        for y in (0 .. point.y).rev() {
+            let new_point = Point{x: point.x, y};
+            if matrix.value(&new_point) >= matrix.value(&point) {
+                trees[tree_idx].visible_from_top = false;
+                break
             }
         }
     }
@@ -153,7 +135,7 @@ mod tests {
     #[test]
     fn part_2() {
         let output = super::part_2(FULL_INPUT);
-        assert_eq!(output, 1234);
+        assert_eq!(output, 268912);
     }
 
 }
