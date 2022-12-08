@@ -17,6 +17,8 @@ static DAY_06_INPUT: &str = include_str!("../inputs/day06.txt");
 
 static DAY_07_INPUT: &str = include_str!("../inputs/day07.txt");
 
+static DAY_08_INPUT: &str = include_str!("../inputs/day08.txt");
+
 
 
 fn bench_01(c: &mut Criterion) {
@@ -54,6 +56,11 @@ fn bench_07(c: &mut Criterion) {
     c.bench_function("Day 07 Part 2", |b| b.iter(|| advent_2022::day07::part_2(black_box(DAY_07_INPUT))));
 }
 
+fn bench_08(c: &mut Criterion) {
+    c.bench_function("Day 08 Part 1", |b| b.iter(|| advent_2022::day08::part_1(black_box(DAY_08_INPUT))));
+    c.bench_function("Day 08 Part 2", |b| b.iter(|| advent_2022::day08::part_2(black_box(DAY_08_INPUT))));
+}
+
 
 criterion_group!(
     benches, 
@@ -71,6 +78,8 @@ criterion_group!(
     bench_06,
     
     bench_07,
+    
+    bench_08,
     
 );
 criterion_main!(benches);
