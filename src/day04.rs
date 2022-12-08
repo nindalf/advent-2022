@@ -1,4 +1,6 @@
 use std::{num::ParseIntError, str::FromStr};
+use rayon::str::ParallelString;
+use rayon::prelude::*;
 
 #[inline]
 pub fn part_1(input: &str) -> usize {
@@ -14,9 +16,9 @@ pub fn part_2(input: &str) -> usize {
         .count()
 }
 
-fn get_ranges(input: &str) -> impl Iterator<Item = (Range, Range)> + '_ {
+fn get_ranges(input: &str) -> impl ParallelIterator<Item = (Range, Range)> + '_ {
     input
-        .lines()
+        .par_lines()
         .flat_map(|line| scan_fmt::scan_fmt!(line, "{d}-{d},{d}-{d}", u32, u32, u32, u32))
         .map(|(a, b, x, y)| (Range { start: a, end: b }, Range { start: x, end: y }))
 }

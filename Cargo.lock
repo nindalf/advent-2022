@@ -9,6 +9,7 @@ dependencies = [
  "anyhow",
  "criterion",
  "nom",
+ "rayon",
  "scan_fmt",
  "take-until",
  "thiserror",
