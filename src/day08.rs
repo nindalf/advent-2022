@@ -7,15 +7,14 @@ pub fn part_1(input: &str) -> usize {
 
     for point in matrix.all_points() {
         let tree_idx = matrix.idx(&point);
-        trees[tree_idx].visible_from_right = true;
         for x in point.x+1 .. matrix.max_x {
             let new_point = Point{x, y: point.y};
             if matrix.value(&new_point) >= matrix.value(&point) {
                 trees[tree_idx].visible_from_right = false;
+                break
             }
         }
 
-        trees[tree_idx].visible_from_left = true;
         for x in (0 .. point.x).rev() {
             let new_point = Point{x, y: point.y};
             if matrix.value(&new_point) >= matrix.value(&point) {
@@ -24,7 +23,6 @@ pub fn part_1(input: &str) -> usize {
             }
         }
 
-        trees[tree_idx].visible_from_bottom = true;
         for y in point.y+1 .. matrix.max_y {
             let new_point = Point{x: point.x, y};
             if matrix.value(&new_point) >= matrix.value(&point) {
@@ -33,7 +31,6 @@ pub fn part_1(input: &str) -> usize {
             }
         }
 
-        trees[tree_idx].visible_from_top = true;
         for y in (0 .. point.y).rev() {
             let new_point = Point{x: point.x, y};
             if matrix.value(&new_point) >= matrix.value(&point) {
@@ -43,28 +40,6 @@ pub fn part_1(input: &str) -> usize {
         }
     }
     trees.iter().filter(|tree| tree.visible()).count()
-}
-
-#[derive(Default, Clone, Debug)]
-struct Tree {
-    visible_from_top: bool,
-    visible_from_left: bool,
-    visible_from_right: bool,
-    visible_from_bottom: bool,
-    trees_top: usize,
-    trees_left: usize,
-    trees_right: usize,
-    trees_bottom: usize,
-}
-
-impl Tree {
-    fn visible(&self) -> bool {
-        self.visible_from_top || self.visible_from_left || self.visible_from_right || self.visible_from_bottom
-    }
-
-    fn scenic_score(&self) -> usize {
-        self.trees_top * self.trees_left * self.trees_right * self.trees_bottom
-    }
 }
 
 #[inline]
@@ -107,6 +82,34 @@ pub fn part_2(input: &str) -> usize {
         }
     }
     trees.iter().map(|tree| tree.scenic_score()).max().unwrap()
+}
+
+#[derive(Clone, Debug)]
+struct Tree {
+    visible_from_top: bool,
+    visible_from_left: bool,
+    visible_from_right: bool,
+    visible_from_bottom: bool,
+    trees_top: usize,
+    trees_left: usize,
+    trees_right: usize,
+    trees_bottom: usize,
+}
+
+impl Default for Tree {
+    fn default() -> Self {
+        Self { visible_from_top: true, visible_from_left: true, visible_from_right: true, visible_from_bottom: true, trees_top: 0, trees_left: 0, trees_right: 0, trees_bottom: 0 }
+    }
+}
+
+impl Tree {
+    fn visible(&self) -> bool {
+        self.visible_from_top || self.visible_from_left || self.visible_from_right || self.visible_from_bottom
+    }
+
+    fn scenic_score(&self) -> usize {
+        self.trees_top * self.trees_left * self.trees_right * self.trees_bottom
+    }
 }
 
 #[cfg(test)]
