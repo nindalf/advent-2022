@@ -75,6 +75,7 @@ impl Matrix {
             .map(|(x, y)| Point { x, y })
     }
 
+    #[allow(dead_code)]
     pub fn find(&self, needle: u32) -> impl Iterator<Item = Point> + '_ {
         self.all_points()
             .filter(move |point| match self.value(point) {
@@ -91,16 +92,19 @@ impl Matrix {
         self.storage[(point.y * self.max_x + point.x)] = val;
     }
 
+    #[allow(dead_code)]
     pub fn add_to_all(&mut self, n: u32) {
         for x in self.storage.iter_mut() {
             *x += n;
         }
     }
 
+    #[allow(dead_code)]
     pub fn add(&mut self, point: &Point, n: u32) {
         self.storage[(point.y * self.max_x + point.x)] += n;
     }
 
+    #[allow(dead_code)]
     pub fn neighbours(&self, point: Point) -> impl Iterator<Item = Point> + '_ {
         let x = point.x as i32;
         let y = point.y as i32;
@@ -112,6 +116,7 @@ impl Matrix {
             .map(|(x, y)| Point { x, y })
     }
 
+    #[allow(dead_code)]
     pub fn neighbours_with_diagonals(&self, point: Point) -> impl Iterator<Item = Point> + '_ {
         let x = point.x as i32;
         let y = point.y as i32;
@@ -128,6 +133,7 @@ impl Matrix {
         self.storage.len()
     }
 
+    #[allow(dead_code)]
     pub fn idx(&self, point: &Point) -> usize {
         point.y * self.max_x + point.x
     }
@@ -147,6 +153,7 @@ impl std::fmt::Display for Matrix {
 }
 
 impl Point {
+    #[allow(dead_code)]
     pub fn new(s: &str) -> Option<Point> {
         let mut parts = s.split(',');
         let x = parts.next()?.parse::<usize>().ok()?;
