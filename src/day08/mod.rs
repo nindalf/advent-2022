@@ -73,8 +73,8 @@ pub fn part_2(input: &str) -> usize {
 
 #[cfg(test)]
 mod tests {
-    static TEST_INPUT: &str = include_str!("../inputs/day08-test.txt");
-    static FULL_INPUT: &str = include_str!("../inputs/day08.txt");
+    static TEST_INPUT: &str = include_str!("test-input.txt");
+    static FULL_INPUT: &str = include_str!("input.txt");
 
     #[test]
     fn part_1_test() {

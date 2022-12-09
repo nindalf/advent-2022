@@ -24,8 +24,8 @@ fn find_first_window_with_unique_chars(input: &str, window_size: usize) -> usize
 
 #[cfg(test)]
 mod tests {
-    static TEST_INPUT: &str = include_str!("../inputs/day06-test.txt");
-    static FULL_INPUT: &str = include_str!("../inputs/day06.txt");
+    static TEST_INPUT: &str = include_str!("test-input.txt");
+    static FULL_INPUT: &str = include_str!("input.txt");
 
     #[test]
     fn part_1_test() {

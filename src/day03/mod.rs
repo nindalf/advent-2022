@@ -53,8 +53,8 @@ impl Priority for char {
 
 #[cfg(test)]
 mod tests {
-    static TEST_INPUT: &str = include_str!("../inputs/day03-test.txt");
-    static FULL_INPUT: &str = include_str!("../inputs/day03.txt");
+    static TEST_INPUT: &str = include_str!("test-input.txt");
+    static FULL_INPUT: &str = include_str!("input.txt");
 
     #[test]
     fn part_1_test() {

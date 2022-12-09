@@ -1,6 +1,6 @@
 use criterion::{black_box, criterion_group, Criterion};
 
-static DAY_07_INPUT: &str = include_str!("../inputs/day07.txt");
+static DAY_07_INPUT: &str = include_str!("../src/day07/input.txt");
 
 fn bench_part_1(c: &mut Criterion) {
     c.bench_function("Day 07 Part 1", |b| {

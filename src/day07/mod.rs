@@ -193,9 +193,8 @@ fn file(input: &str) -> IResult<&str, DirContent> {
 
 #[cfg(test)]
 mod tests {
-
-    static TEST_INPUT: &str = include_str!("../inputs/day07-test.txt");
-    static FULL_INPUT: &str = include_str!("../inputs/day07.txt");
+    static TEST_INPUT: &str = include_str!("test-input.txt");
+    static FULL_INPUT: &str = include_str!("input.txt");
 
     #[test]
     fn part_1_test() {

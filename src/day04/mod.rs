@@ -63,8 +63,8 @@ impl FromStr for Range {
 
 #[cfg(test)]
 mod tests {
-    static TEST_INPUT: &str = include_str!("../inputs/day04-test.txt");
-    static FULL_INPUT: &str = include_str!("../inputs/day04.txt");
+    static TEST_INPUT: &str = include_str!("test-input.txt");
+    static FULL_INPUT: &str = include_str!("input.txt");
 
     #[test]
     fn part_1_test() {
