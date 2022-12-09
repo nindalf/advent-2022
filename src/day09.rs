@@ -12,7 +12,7 @@ pub fn part_1(input: &str) -> usize {
             | Movement::Down(steps)
             | Movement::Up(steps) => {
                 for _ in 0..*steps {
-                    head = get_new_head_position(&head, &movement);
+                    head = get_new_head_position(head, &movement);
                     tail = get_new_tail_position(&head, tail);
                     tail_locations.insert(tail);
                 }
@@ -34,7 +34,7 @@ pub fn part_2(input: &str) -> usize {
             | Movement::Down(steps)
             | Movement::Up(steps) => {
                 for _ in 0..*steps {
-                    knots[0] = get_new_head_position(&knots[0], &movement);
+                    knots[0] = get_new_head_position(knots[0], &movement);
                     for i in 1..10 {
                         knots[i] = get_new_tail_position(&knots[i - 1], knots[i]);
                     }
@@ -47,31 +47,20 @@ pub fn part_2(input: &str) -> usize {
     tail_locations.len()
 }
 
-fn get_new_head_position(head: &Point, movement: &Movement) -> Point {
+fn get_new_head_position(mut head: Point, movement: &Movement) -> Point {
     match movement {
-        Movement::Left(_) => Point {
-            x: head.x - 1,
-            y: head.y,
-        },
-        Movement::Right(_) => Point {
-            x: head.x + 1,
-            y: head.y,
-        },
-        Movement::Down(_) => Point {
-            x: head.x,
-            y: head.y - 1,
-        },
-        Movement::Up(_) => Point {
-            x: head.x,
-            y: head.y + 1,
-        },
-    }
+        Movement::Left(_) => head.x -= 1,
+        Movement::Right(_) => head.x += 1,
+        Movement::Down(_) => head.y -= 1,
+        Movement::Up(_) => head.y += 1,
+    };
+    head
 }
 fn get_new_tail_position(head: &Point, tail: Point) -> Point {
     let distance_x = i32::abs(head.x - tail.x);
     let distance_y = i32::abs(head.y - tail.y);
 
-    let x = match (distance_x, distance_y) {
+    match (distance_x, distance_y) {
         (1, 1) | (0, 1) | (1, 0) | (0, 0) => tail,
         (2, 1) => Point {
             x: (head.x + tail.x) / 2,
@@ -94,8 +83,7 @@ fn get_new_tail_position(head: &Point, tail: Point) -> Point {
             y: (head.y + tail.y) / 2,
         },
         (x, y) => unreachable!("Tail is too far {x} {y}"),
-    };
-    x
+    }
 }
 
 #[derive(PartialEq, Eq, Hash, Clone, Copy, Debug)]
