@@ -14,8 +14,4 @@ fn bench_part_2(c: &mut Criterion) {
     });
 }
 
-criterion_group!(
-    benches, 
-    bench_part_1,
-    bench_part_2,
-);
+criterion_group!(benches, bench_part_1, bench_part_2,);

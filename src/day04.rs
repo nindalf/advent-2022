@@ -1,6 +1,6 @@
-use std::{num::ParseIntError, str::FromStr};
-use rayon::str::ParallelString;
 use rayon::prelude::*;
+use rayon::str::ParallelString;
+use std::{num::ParseIntError, str::FromStr};
 
 #[inline]
 pub fn part_1(input: &str) -> usize {
