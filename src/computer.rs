@@ -1,10 +1,6 @@
 use nom::{
-    branch::alt,
-    bytes::complete::tag,
-    character::complete::{multispace1, newline},
-    combinator::{map, recognize},
-    sequence::{pair, separated_pair, terminated},
-    IResult,
+    branch::alt, bytes::complete::tag, character::complete::newline, combinator::map,
+    sequence::delimited, IResult,
 };
 
 pub struct Computer {
@@ -129,17 +125,12 @@ fn next_instruction(input: &str) -> IResult<&str, Instruction> {
 }
 
 fn noop(input: &str) -> IResult<&str, Instruction> {
-    map(recognize(pair(tag("noop"), newline)), |_: &str| {
-        Instruction::Noop
-    })(input)
+    map(tag("noop\n"), |_: &str| Instruction::Noop)(input)
 }
 
 fn addx(input: &str) -> IResult<&str, Instruction> {
     map(
-        terminated(
-            separated_pair(tag("addx"), multispace1, nom::character::complete::i32),
-            newline,
-        ),
-        |(_, argument): (_, i32)| Instruction::Addx(argument),
+        delimited(tag("addx "), nom::character::complete::i32, newline),
+        |argument: i32| Instruction::Addx(argument),
     )(input)
 }
