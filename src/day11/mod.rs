@@ -1,3 +1,5 @@
+use std::cell::RefCell;
+
 #[inline]
 pub fn part_1(input: &str) -> u64 {
     let monkeys = get_monkeys(input);
@@ -11,27 +13,26 @@ pub fn part_2(input: &str) -> u64 {
     simulate(monkeys, 10000, &|item| item % modulo)
 }
 
-fn simulate(mut monkeys: Vec<Monkey>, rounds: u64, worry_limiter: &dyn Fn(u64) -> u64) -> u64 {
+fn simulate(monkeys: Vec<Monkey>, rounds: u64, worry_limiter: &dyn Fn(u64) -> u64) -> u64 {
     let mut operations = vec![0; monkeys.len()];
     for _ in 0..rounds {
         for i in 0..monkeys.len() {
-            let m = monkeys[i].clone();
-            monkeys[i].items.clear();
-            for item in m.items {
-                let item = match m.operation {
+            for item in monkeys[i].items.borrow().iter() {
+                let item = match monkeys[i].operation {
                     Op::Add(arg) => item + arg,
                     Op::Mul(arg) => item * arg,
                     Op::Square => item * item,
                 };
                 let limited_item = (worry_limiter)(item);
-                let destination = if limited_item % m.divisible_by == 0 {
-                    m.dest_monkey_true
+                let destination = if limited_item % monkeys[i].divisible_by == 0 {
+                    monkeys[i].dest_monkey_true
                 } else {
-                    m.dest_monkey_false
+                    monkeys[i].dest_monkey_false
                 };
-                monkeys[destination].items.push(limited_item);
+                monkeys[destination].items.borrow_mut().push(limited_item);
                 operations[i] += 1;
             }
+            monkeys[i].items.borrow_mut().clear();
         }
     }
     operations.sort();
@@ -63,7 +64,7 @@ fn get_monkeys(input: &str) -> Vec<Monkey> {
                 .parse()
                 .unwrap();
             Monkey {
-                items,
+                items: RefCell::new(items),
                 operation,
                 divisible_by,
                 dest_monkey_true,
@@ -75,7 +76,7 @@ fn get_monkeys(input: &str) -> Vec<Monkey> {
 
 #[derive(Clone)]
 pub struct Monkey {
-    items: Vec<u64>,
+    items: RefCell<Vec<u64>>,
     operation: Op,
     divisible_by: u64,
     dest_monkey_true: usize,
