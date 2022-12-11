@@ -1,246 +1,107 @@
-use std::collections::{VecDeque, HashMap};
-
 #[inline]
-pub fn part_1(mut monkeys: Vec<Monkey>) -> u128 {
-    let mut inspections: HashMap<usize, u128> = HashMap::new();
-    for round in 0 .. 20 {
-        for i in 0 .. monkeys.len() {
-            let mut destinations = vec![
-                VecDeque::new(); monkeys.len()
-            ];
-            let monkey = &mut monkeys[i];
-            // println!("{round} {i} {:?}", &monkey.items);
-            while let Some(item) = monkey.items.pop_front() {
-                let worry_level = (monkey.operation)(item)/3;
-                let new_monkey = (monkey.test)(worry_level);
-                destinations[new_monkey].push_back(worry_level);
-                inspections.entry(i).and_modify(|count| *count += 1).or_insert(1);
-            }
-            for monkey in monkeys.iter_mut().rev() {
-                monkey.items.extend(destinations.pop().unwrap());
-            }
-        }
-    }
-    let mut operations: Vec<&u128> = inspections.values().collect();
-    operations.sort();
-    operations[operations.len()-1] * operations[operations.len()-2]
+pub fn part_1(input: &str) -> u128 {
+    let monkeys = get_monkeys(input);
+    simulate(monkeys, 20, &|item| item/3)
 }
 
 #[inline]
-pub fn part_2(mut monkeys: Vec<Monkey>) -> u128 {
-    let mut inspections: HashMap<usize, u128> = HashMap::new();
-    for round in 0 .. 10000 {
+pub fn part_2(input: &str) -> u128 {
+    let monkeys = get_monkeys(input);
+    let modulo: u128 = monkeys.iter().map(|m| m.divisible_by).product();
+    simulate(monkeys, 10000, &|item| item % modulo)
+}
+
+fn simulate(mut monkeys: Vec<Monkey>, rounds: u128, worry_limiter: &dyn Fn(u128) -> u128) -> u128 {
+    let mut operations = vec![0; monkeys.len()];
+    for _ in 0 .. rounds {
         for i in 0 .. monkeys.len() {
-            let mut destinations = vec![
-                VecDeque::new(); monkeys.len()
-            ];
-            let monkey = &mut monkeys[i];
-            // println!("{round} {i} {:?}", &monkey.items);
-            while let Some(item) = monkey.items.pop_front() {
-                let worry_level = (monkey.worry_limiter)((monkey.operation)(item));
-                let new_monkey = (monkey.test)(worry_level);
-                destinations[new_monkey].push_back(worry_level);
-                inspections.entry(i).and_modify(|count| *count += 1).or_insert(1);
-            }
-            for monkey in monkeys.iter_mut().rev() {
-                monkey.items.extend(destinations.pop().unwrap());
+            let m = monkeys[i].clone();
+            monkeys[i].items = Vec::new();
+            for item in m.items {
+                let item = match m.operation {
+                    Op::Add(arg) => item + arg,
+                    Op::Mul(arg) => item * arg,
+                    Op::Square => item * item,
+                };
+                let limited_item = (worry_limiter)(item);
+                let destination = if limited_item % m.divisible_by == 0 {
+                    m.dest_monkey_true
+                } else {
+                    m.dest_monkey_false
+                };
+                monkeys[destination].items.push(limited_item);
+                operations[i] += 1;
             }
         }
     }
-    let mut operations: Vec<&u128> = inspections.values().collect();
     operations.sort();
-    operations[operations.len()-1] * operations[operations.len()-2]
+    let l = operations.len();
+    operations[l-1] * operations[l-2]
 }
 
+fn get_monkeys(input: &str) -> Vec<Monkey> {
+    input.split("\n\n")
+        .map(|m| {
+            let lines: Vec<_> = m.lines().skip(1).map(|l| l.trim()).collect();
+            let items = lines[0][16..].split(", ").map(|x| x.parse().unwrap()).collect();
+            let operation = if lines[1] == "Operation: new = old * old" {
+                Op::Square
+            } else if lines[1].starts_with("Operation: new = old * ") {
+                Op::Mul(lines[1]["Operation: new = old * ".len()..].parse().unwrap())
+            } else {
+                Op::Add(lines[1]["Operation: new = old + ".len()..].parse().unwrap())
+            };
+            let divisible_by = lines[2]["Test: divisible by ".len()..].parse().unwrap();
+            let dest_monkey_true = lines[3]["If true: throw to monkey ".len()..].parse().unwrap();
+            let dest_monkey_false = lines[4]["If false: throw to monkey ".len()..].parse().unwrap();
+            Monkey{items, operation, divisible_by, dest_monkey_true, dest_monkey_false}
+        })
+        .collect()
+}
+
+#[derive(Clone)]
 pub struct Monkey {
-    items: VecDeque<u128>,
-    operation: Box<dyn Fn(u128)->u128>,
-    test: Box<dyn Fn(u128)->usize>,
-    worry_limiter: Box<dyn Fn(u128)->u128>
+    items: Vec<u128>,
+    operation: Op,
+    divisible_by: u128,
+    dest_monkey_true: usize,
+    dest_monkey_false: usize,
+}
+
+#[derive(Clone)]
+enum Op {
+    Add(u128),
+    Mul(u128),
+    Square,
 }
 
 #[cfg(test)]
 mod tests {
-    use std::collections::VecDeque;
-
-    use crate::day11::Monkey;
-
-    // static TEST_INPUT: &str = include_str!("test-input.txt");
-    // static FULL_INPUT: &str = include_str!("input.txt");
+    static TEST_INPUT: &str = include_str!("test-input.txt");
+    static FULL_INPUT: &str = include_str!("input.txt");
 
     #[test]
     fn part_1_test() {
-        let monkeys = vec![
-            Monkey{
-                items: VecDeque::from_iter(vec![79, 98]),
-                operation: Box::new(|old| {old * 19}),
-                test: Box::new(|old| {if old % 23 == 0 {2} else {3}}),
-                worry_limiter: Box::new(|old| old % 96577),
-            },
-            Monkey{
-                items: VecDeque::from_iter(vec![54, 65, 75, 74]),
-                operation: Box::new(|old| {old + 6}),
-                test: Box::new(|old| {if old % 19 == 0 {2} else {0}}),
-                worry_limiter: Box::new(|old| old % 96577),
-            },
-            Monkey{
-                items: VecDeque::from_iter(vec![79, 60, 97]),
-                operation: Box::new(|old| {old * old}),
-                test: Box::new(|old| {if old % 13 == 0 {1} else {3}}),
-                worry_limiter: Box::new(|old| old % 96577),
-            },
-            Monkey{
-                items: VecDeque::from_iter(vec![74]),
-                operation: Box::new(|old| old + 3),
-                test: Box::new(|old| {if old % 17 == 0 {0} else {1}}),
-                worry_limiter: Box::new(|old| old % 96577),
-            },
-        ];
-        let output = super::part_1(monkeys);
+        let output = super::part_1(TEST_INPUT);
         assert_eq!(output, 10605);
     }
 
     #[test]
     fn part_1() {
-        let monkeys = vec![
-            Monkey{
-                items: VecDeque::from_iter(vec![52, 78, 79, 63, 51, 94]),
-                operation: Box::new(|old| old * 13),
-                test: Box::new(|old| if old % 5 == 0 {1} else {6}),
-                worry_limiter: Box::new(|old| if old % 5 == 0 {old/5} else {old}),
-            },
-            Monkey{
-                items: VecDeque::from_iter(vec![77, 94, 70, 83, 53]),
-                operation: Box::new(|old| old + 3),
-                test: Box::new(|old| if old % 7 == 0 {5} else {3}),
-                worry_limiter: Box::new(|old| if old % 7 == 0 {old/7} else {old}),
-            },
-            Monkey{
-                items: VecDeque::from_iter(vec![98, 50, 76]),
-                operation: Box::new(|old| old * old),
-                test: Box::new(|old| if old % 13 == 0 {0} else {6}),
-                worry_limiter: Box::new(|old| if old % 13 == 0 {old/13} else {old}),
-            },
-            Monkey{
-                items: VecDeque::from_iter(vec![92, 91, 61, 75, 99, 63, 84, 69]),
-                operation: Box::new(|old| old + 5),
-                test: Box::new(|old| if old % 11 == 0 {5} else {7}),
-                worry_limiter: Box::new(|old| if old % 11 == 0 {old/11} else {old}),
-            },
-            Monkey{
-                items: VecDeque::from_iter(vec![51, 53, 83, 52]),
-                operation: Box::new(|old| old + 7),
-                test: Box::new(|old| if old % 3 == 0 {2} else {0}),
-                worry_limiter: Box::new(|old| if old % 3 == 0 {old/3} else {old}),
-            },
-            Monkey{
-                items: VecDeque::from_iter(vec![76, 76]),
-                operation: Box::new(|old| old + 4),
-                test: Box::new(|old| if old % 2 == 0 {4} else {7}),
-                worry_limiter: Box::new(|old| if old % 2 == 0 {old/2} else {old}),
-            },
-            Monkey{
-                items: VecDeque::from_iter(vec![75, 59, 93, 69, 76, 96, 65]),
-                operation: Box::new(|old| old * 19),
-                test: Box::new(|old| if old % 17 == 0 {1} else {3}),
-                worry_limiter: Box::new(|old| if old % 17 == 0 {old/17} else {old}),
-            },
-            Monkey{
-                items: VecDeque::from_iter(vec![89]),
-                operation: Box::new(|old| old + 2),
-                test: Box::new(|old| if old % 19 == 0 {2} else {4}),
-                worry_limiter: Box::new(|old| if old % 19 == 0 {old/19} else {old}),
-            },
-        ];
-        let output = super::part_1(monkeys);
+
+        let output = super::part_1(FULL_INPUT);
         assert_eq!(output, 58786);
     }
 
     #[test]
     fn part_2_test() {
-        let monkeys = vec![
-            Monkey{
-                items: VecDeque::from_iter(vec![79, 98]),
-                operation: Box::new(|old| {old * 19}),
-                test: Box::new(|old| {if old % 23 == 0 {2} else {3}}),
-                worry_limiter: Box::new(|old| old % 96577),
-            },
-            Monkey{
-                items: VecDeque::from_iter(vec![54, 65, 75, 74]),
-                operation: Box::new(|old| {old + 6}),
-                test: Box::new(|old| {if old % 19 == 0 {2} else {0}}),
-                worry_limiter: Box::new(|old| old % 96577),
-            },
-            Monkey{
-                items: VecDeque::from_iter(vec![79, 60, 97]),
-                operation: Box::new(|old| {old * old}),
-                test: Box::new(|old| {if old % 13 == 0 {1} else {3}}),
-                worry_limiter: Box::new(|old| old % 96577),
-            },
-            Monkey{
-                items: VecDeque::from_iter(vec![74]),
-                operation: Box::new(|old| old + 3),
-                test: Box::new(|old| {if old % 17 == 0 {0} else {1}}),
-                worry_limiter: Box::new(|old| old % 96577),
-            },
-        ];
-        let output = super::part_2(monkeys);
+        let output = super::part_2(TEST_INPUT);
         assert_eq!(output, 2713310158);
     }
 
     #[test]
     fn part_2() {
-        let monkeys = vec![
-            Monkey{
-                items: VecDeque::from_iter(vec![52, 78, 79, 63, 51, 94]),
-                operation: Box::new(|old| old * 13),
-                test: Box::new(|old| if old % 5 == 0 {1} else {6}),
-                worry_limiter: Box::new(|old| old % 9699690),
-            },
-            Monkey{
-                items: VecDeque::from_iter(vec![77, 94, 70, 83, 53]),
-                operation: Box::new(|old| old + 3),
-                test: Box::new(|old| if old % 7 == 0 {5} else {3}),
-                worry_limiter: Box::new(|old| old % 9699690),
-            },
-            Monkey{
-                items: VecDeque::from_iter(vec![98, 50, 76]),
-                operation: Box::new(|old| old * old),
-                test: Box::new(|old| if old % 13 == 0 {0} else {6}),
-                worry_limiter: Box::new(|old| old % 9699690),
-            },
-            Monkey{
-                items: VecDeque::from_iter(vec![92, 91, 61, 75, 99, 63, 84, 69]),
-                operation: Box::new(|old| old + 5),
-                test: Box::new(|old| if old % 11 == 0 {5} else {7}),
-                worry_limiter: Box::new(|old| old % 9699690),
-            },
-            Monkey{
-                items: VecDeque::from_iter(vec![51, 53, 83, 52]),
-                operation: Box::new(|old| old + 7),
-                test: Box::new(|old| if old % 3 == 0 {2} else {0}),
-                worry_limiter: Box::new(|old| old % 9699690),
-            },
-            Monkey{
-                items: VecDeque::from_iter(vec![76, 76]),
-                operation: Box::new(|old| old + 4),
-                test: Box::new(|old| if old % 2 == 0 {4} else {7}),
-                worry_limiter: Box::new(|old| old % 9699690),
-            },
-            Monkey{
-                items: VecDeque::from_iter(vec![75, 59, 93, 69, 76, 96, 65]),
-                operation: Box::new(|old| old * 19),
-                test: Box::new(|old| if old % 17 == 0 {1} else {3}),
-                worry_limiter: Box::new(|old| old % 9699690),
-            },
-            Monkey{
-                items: VecDeque::from_iter(vec![89]),
-                operation: Box::new(|old| old + 2),
-                test: Box::new(|old| if old % 19 == 0 {2} else {4}),
-                worry_limiter: Box::new(|old| old % 9699690),
-            },
-        ];
-        let output = super::part_2(monkeys);
+        let output = super::part_2(FULL_INPUT);
         assert_eq!(output, 14952185856);
     }
 
