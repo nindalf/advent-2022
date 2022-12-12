@@ -1,4 +1,4 @@
-use std::collections::{BinaryHeap, HashMap};
+use std::collections::{BinaryHeap, HashMap, VecDeque};
 
 use crate::matrix::{Matrix, Point};
 
@@ -9,7 +9,7 @@ pub fn part_1(input: &str) -> u32 {
     let end_val = 27;
     let step_allowed =
         |current_elevation, neighbour_elevation| current_elevation + 1 >= neighbour_elevation;
-    matrix.dijkstra_cost(&start, end_val, &step_allowed)
+    matrix.bfs_cost(&start, end_val, &step_allowed)
 }
 
 #[inline]
@@ -19,7 +19,7 @@ pub fn part_2(input: &str) -> u32 {
     let end_val = 1;
     let step_allowed =
         |current_elevation, neighbour_elevation| current_elevation - 1 <= neighbour_elevation;
-    matrix.dijkstra_cost(&start, end_val, &step_allowed)
+    matrix.bfs_cost(&start, end_val, &step_allowed)
 }
 
 fn get_matrix(input: &str) -> Matrix {
@@ -43,19 +43,23 @@ fn get_matrix(input: &str) -> Matrix {
 }
 
 impl Matrix {
-    #[allow(dead_code)]
-    fn dijkstra_cost(
+    // I've specifically implemented BFS for day 12 because it's 10% faster
+    // To convert bfs() to dijkstra() make these changes
+    // 1. Rename queue to heap
+    // 2. Change VecDeque to BinaryHeap
+    // 3. Change push_back() to push() and pop_front() to pop()
+    fn bfs_cost(
         &self,
         start: &Point,
         end_val: u32,
         step_allowed: &dyn Fn(u32, u32) -> bool,
     ) -> u32 {
-        let mut heap = BinaryHeap::new();
+        let mut queue = VecDeque::with_capacity(100);
         let mut visited = HashMap::new();
         let start = State::new(*start, 0);
-        heap.push(start);
+        queue.push_back(start);
 
-        while let Some(state) = heap.pop() {
+        while let Some(state) = queue.pop_front() {
             if *self.value(&state.point).unwrap() == end_val {
                 return state.cost;
             }
@@ -72,7 +76,7 @@ impl Matrix {
                             continue;
                         }
                     }
-                    heap.push(State {
+                    queue.push_back(State {
                         point: neighbour,
                         cost: cost_to_neighbour,
                     });
