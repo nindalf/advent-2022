@@ -131,6 +131,6 @@ fn noop(input: &str) -> IResult<&str, Instruction> {
 fn addx(input: &str) -> IResult<&str, Instruction> {
     map(
         delimited(tag("addx "), nom::character::complete::i32, newline),
-        |argument: i32| Instruction::Addx(argument),
+        Instruction::Addx,
     )(input)
 }
