@@ -51,34 +51,40 @@ impl Matrix {
         step_allowed: &dyn Fn(u32, u32) -> bool,
     ) -> u32 {
         let mut heap = BinaryHeap::new();
-        let start = State::new(*start, 0);
         let mut visited = HashMap::new();
+        let start = State::new(*start, 0);
         heap.push(start);
 
         while let Some(state) = heap.pop() {
+            if let Some(previous_cost) = visited.get(&state.point) {
+                // Already a lower cost route to this point in the heap
+                // Or previously visited via a lower cost route
+                if *previous_cost < state.cost {
+                    continue;
+                }
+            }
             if *self.value(&state.point).unwrap() == end_val {
                 return state.cost;
             }
-            if visited.contains_key(&state.point) {
-                continue;
-            }
-            visited.insert(state.point, state.cost);
+            // check if popped point is the best point in visited
+            // visited.insert(state.point, state.cost);
             for neighbour in self.neighbours(state.point) {
                 if let Some(value) = self.value(&neighbour) {
                     if !step_allowed(*self.value(&state.point).unwrap(), *value) {
                         continue;
                     }
-                    let cost_to_neighbour = state.cost + 1;
-                    // Already a better route to this point
+                    let cost_to_neighbour = state.cost + 1; // constant cost 1 for this problem
                     if let Some(previous_cost) = visited.get(&neighbour) {
-                        if *previous_cost < cost_to_neighbour {
+                        // Already a better route to this point
+                        if *previous_cost <= cost_to_neighbour {
                             continue;
                         }
                     }
                     heap.push(State {
                         point: neighbour,
                         cost: cost_to_neighbour,
-                    })
+                    });
+                    visited.insert(neighbour, cost_to_neighbour);
                 }
             }
         }

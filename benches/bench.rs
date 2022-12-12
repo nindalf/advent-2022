@@ -14,16 +14,16 @@ mod day11;
 mod day12;
 
 criterion_main!(
-    day01::benches,
-    day02::benches,
-    day03::benches,
-    day04::benches,
-    day05::benches,
-    day06::benches,
-    day07::benches,
-    day08::benches,
-    day09::benches,
-    day10::benches,
-    day11::benches,
+    // day01::benches,
+    // day02::benches,
+    // day03::benches,
+    // day04::benches,
+    // day05::benches,
+    // day06::benches,
+    // day07::benches,
+    // day08::benches,
+    // day09::benches,
+    // day10::benches,
+    // day11::benches,
     day12::benches,
 );
