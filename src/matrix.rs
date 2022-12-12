@@ -1,7 +1,7 @@
 use std::fmt::Write;
 
 pub struct Matrix {
-    storage: Vec<u32>,
+    pub storage: Vec<u32>,
     pub max_x: usize,
     pub max_y: usize,
 }
