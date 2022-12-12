@@ -56,18 +56,9 @@ impl Matrix {
         heap.push(start);
 
         while let Some(state) = heap.pop() {
-            if let Some(previous_cost) = visited.get(&state.point) {
-                // Already a lower cost route to this point in the heap
-                // Or previously visited via a lower cost route
-                if *previous_cost < state.cost {
-                    continue;
-                }
-            }
             if *self.value(&state.point).unwrap() == end_val {
                 return state.cost;
             }
-            // check if popped point is the best point in visited
-            // visited.insert(state.point, state.cost);
             for neighbour in self.neighbours(state.point) {
                 if let Some(value) = self.value(&neighbour) {
                     if !step_allowed(*self.value(&state.point).unwrap(), *value) {
@@ -75,7 +66,8 @@ impl Matrix {
                     }
                     let cost_to_neighbour = state.cost + 1; // constant cost 1 for this problem
                     if let Some(previous_cost) = visited.get(&neighbour) {
-                        // Already a better route to this point
+                        // Already a better route to this neigbour
+                        // Ignore this neighbour and move onto the next one
                         if *previous_cost <= cost_to_neighbour {
                             continue;
                         }
