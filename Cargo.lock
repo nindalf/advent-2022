@@ -12,6 +12,7 @@ dependencies = [
  "paste",
  "rayon",
  "scan_fmt",
+ "serde_json",
  "take-until",
  "thiserror",
 ]
