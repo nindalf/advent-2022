@@ -38,15 +38,15 @@ pub fn part_2(input: &str) -> usize {
 
     let packet_two: Value = serde_json::from_str("[[6]]").unwrap();
     let position_two = values.iter().position(|val| *val == packet_two).unwrap() + 1;
-    
+
     position_one * position_two
 }
 
 fn compare(left: &Value, right: &Value) -> Ordering {
     match (left, right) {
         (Value::Number(x), Value::Number(y)) => x.as_u64().cmp(&y.as_u64()),
-        (Value::Number(x), Value::Array(y)) => compare(&json!([x]), &json!(y)),
-        (Value::Array(x), Value::Number(y)) => compare(&json!(x), &json!([y])),
+        (Value::Number(x), Value::Array(_)) => compare(&json!([x]), right),
+        (Value::Array(_), Value::Number(y)) => compare(left, &json!([y])),
         (Value::Array(x), Value::Array(y)) => {
             for i in 0..usize::min(x.len(), y.len()) {
                 let result = compare(&x[i], &y[i]);
