@@ -90,32 +90,4 @@ enum Op {
     Square,
 }
 
-#[cfg(test)]
-mod tests {
-    static TEST_INPUT: &str = include_str!("test-input.txt");
-    static FULL_INPUT: &str = include_str!("input.txt");
-
-    #[test]
-    fn part_1_test() {
-        let output = super::part_1(TEST_INPUT);
-        assert_eq!(output, 10605);
-    }
-
-    #[test]
-    fn part_1() {
-        let output = super::part_1(FULL_INPUT);
-        assert_eq!(output, 58786);
-    }
-
-    #[test]
-    fn part_2_test() {
-        let output = super::part_2(TEST_INPUT);
-        assert_eq!(output, 2713310158);
-    }
-
-    #[test]
-    fn part_2() {
-        let output = super::part_2(FULL_INPUT);
-        assert_eq!(output, 14952185856);
-    }
-}
+crate::aoctest!(10605, 58786, 2713310158, 14952185856);

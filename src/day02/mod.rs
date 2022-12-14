@@ -62,32 +62,4 @@ fn strategy_two(line: &str) -> i32 {
     basic_score + fight_score
 }
 
-#[cfg(test)]
-mod tests {
-    static TEST_INPUT: &str = include_str!("test-input.txt");
-    static FULL_INPUT: &str = include_str!("input.txt");
-
-    #[test]
-    fn part_1_test() {
-        let output = super::part_1(TEST_INPUT);
-        assert_eq!(output, 15);
-    }
-
-    #[test]
-    fn part_1() {
-        let output = super::part_1(FULL_INPUT);
-        assert_eq!(output, 14069);
-    }
-
-    #[test]
-    fn part_2_test() {
-        let output = super::part_2(TEST_INPUT);
-        assert_eq!(output, 12);
-    }
-
-    #[test]
-    pub fn part_2() {
-        let output = super::part_2(FULL_INPUT);
-        assert_eq!(output, 12411);
-    }
-}
+crate::aoctest!(15, 14069, 12, 12411);

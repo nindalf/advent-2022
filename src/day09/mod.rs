@@ -113,32 +113,5 @@ enum Movement {
     Up(usize),
 }
 
-#[cfg(test)]
-mod tests {
-    static TEST_INPUT: &str = include_str!("test-input.txt");
-    static FULL_INPUT: &str = include_str!("input.txt");
+crate::aoctest!(88, 6384, 36, 2734);
 
-    #[test]
-    fn part_1_test() {
-        let output = super::part_1(TEST_INPUT);
-        assert_eq!(output, 88);
-    }
-
-    #[test]
-    fn part_1() {
-        let output = super::part_1(FULL_INPUT);
-        assert_eq!(output, 6384);
-    }
-
-    #[test]
-    fn part_2_test() {
-        let output = super::part_2(TEST_INPUT);
-        assert_eq!(output, 36);
-    }
-
-    #[test]
-    fn part_2() {
-        let output = super::part_2(FULL_INPUT);
-        assert_eq!(output, 2734);
-    }
-}

@@ -66,32 +66,4 @@ fn get_instructions(input: &str) -> impl Iterator<Item = Instruction> + '_ {
         })
 }
 
-#[cfg(test)]
-mod tests {
-    static TEST_INPUT: &str = include_str!("test-input.txt");
-    static FULL_INPUT: &str = include_str!("input.txt");
-
-    #[test]
-    fn part_1_test() {
-        let output = super::part_1(TEST_INPUT);
-        assert_eq!(output, "CMZ");
-    }
-
-    #[test]
-    fn part_1() {
-        let output = super::part_1(FULL_INPUT);
-        assert_eq!(output, "BZLVHBWQF");
-    }
-
-    #[test]
-    fn part_2_test() {
-        let output = super::part_2(TEST_INPUT);
-        assert_eq!(output, "MCD");
-    }
-
-    #[test]
-    pub fn part_2() {
-        let output = super::part_2(FULL_INPUT);
-        assert_eq!(output, "TDGJQTZSL");
-    }
-}
+crate::aoctest!("CMZ", "BZLVHBWQF", "MCD", "TDGJQTZSL");

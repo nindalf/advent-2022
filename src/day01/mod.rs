@@ -23,32 +23,4 @@ fn heap_of_calories(input: &str) -> BinaryHeap<i32> {
         .collect()
 }
 
-#[cfg(test)]
-mod tests {
-    static TEST_INPUT: &str = include_str!("test-input.txt");
-    static FULL_INPUT: &str = include_str!("input.txt");
-
-    #[test]
-    fn part_1_test() {
-        let output = super::part_1(TEST_INPUT);
-        assert_eq!(output, 24000);
-    }
-
-    #[test]
-    fn part_1() {
-        let output = super::part_1(FULL_INPUT);
-        assert_eq!(output, 70698);
-    }
-
-    #[test]
-    fn part_2_test() {
-        let output = super::part_2(TEST_INPUT);
-        assert_eq!(output, 45000);
-    }
-
-    #[test]
-    pub fn part_2() {
-        let output = super::part_2(FULL_INPUT);
-        assert_eq!(output, 206643);
-    }
-}
+crate::aoctest!(24000, 70698, 45000, 206643);

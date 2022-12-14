@@ -88,32 +88,4 @@ fn get_rocks(input: &str) -> HashSet<(u32, u32)> {
     rocks
 }
 
-#[cfg(test)]
-mod tests {
-    static TEST_INPUT: &str = include_str!("test-input.txt");
-    static FULL_INPUT: &str = include_str!("input.txt");
-
-    #[test]
-    fn part_1_test() {
-        let output = super::part_1(TEST_INPUT);
-        assert_eq!(output, 24);
-    }
-
-    #[test]
-    fn part_1() {
-        let output = super::part_1(FULL_INPUT);
-        assert_eq!(output, 618);
-    }
-
-    #[test]
-    fn part_2_test() {
-        let output = super::part_2(TEST_INPUT);
-        assert_eq!(output, 93);
-    }
-
-    #[test]
-    fn part_2() {
-        let output = super::part_2(FULL_INPUT);
-        assert_eq!(output, 26358);
-    }
-}
+crate::aoctest!(24, 618, 93, 26358);

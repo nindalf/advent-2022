@@ -62,32 +62,4 @@ fn compare(left: &Value, right: &Value) -> Ordering {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    static TEST_INPUT: &str = include_str!("test-input.txt");
-    static FULL_INPUT: &str = include_str!("input.txt");
-
-    #[test]
-    fn part_1_test() {
-        let output = super::part_1(TEST_INPUT);
-        assert_eq!(output, 13);
-    }
-
-    #[test]
-    fn part_1() {
-        let output = super::part_1(FULL_INPUT);
-        assert_eq!(output, 5580);
-    }
-
-    #[test]
-    fn part_2_test() {
-        let output = super::part_2(TEST_INPUT);
-        assert_eq!(output, 140);
-    }
-
-    #[test]
-    fn part_2() {
-        let output = super::part_2(FULL_INPUT);
-        assert_eq!(output, 26200);
-    }
-}
+crate::aoctest!(13, 5580, 140, 26200);

@@ -1,6 +1,5 @@
 use rayon::prelude::*;
 use rayon::str::ParallelString;
-use std::{num::ParseIntError, str::FromStr};
 
 #[inline]
 pub fn part_1(input: &str) -> usize {
@@ -40,53 +39,4 @@ impl Range {
     }
 }
 
-#[derive(thiserror::Error, Debug)]
-enum ParseRangeError {
-    #[error("not u32")]
-    ParseInt(#[from] ParseIntError),
-    #[error("failed to split at delimiter '-'")]
-    ParseString,
-}
-
-impl FromStr for Range {
-    type Err = ParseRangeError;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let (first, second) = s.split_once('-').ok_or(ParseRangeError::ParseString)?;
-
-        let start: u32 = first.parse()?;
-        let end: u32 = second.parse()?;
-
-        Ok(Range { start, end })
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    static TEST_INPUT: &str = include_str!("test-input.txt");
-    static FULL_INPUT: &str = include_str!("input.txt");
-
-    #[test]
-    fn part_1_test() {
-        let output = super::part_1(TEST_INPUT);
-        assert_eq!(output, 2);
-    }
-
-    #[test]
-    fn part_1() {
-        let output = super::part_1(FULL_INPUT);
-        assert_eq!(output, 509);
-    }
-
-    #[test]
-    fn part_2_test() {
-        let output = super::part_2(TEST_INPUT);
-        assert_eq!(output, 4);
-    }
-
-    #[test]
-    pub fn part_2() {
-        let output = super::part_2(FULL_INPUT);
-        assert_eq!(output, 870);
-    }
-}
+crate::aoctest!(2, 509, 4, 870);

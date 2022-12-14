@@ -191,32 +191,4 @@ fn file(input: &str) -> IResult<&str, DirContent> {
     )(input)
 }
 
-#[cfg(test)]
-mod tests {
-    static TEST_INPUT: &str = include_str!("test-input.txt");
-    static FULL_INPUT: &str = include_str!("input.txt");
-
-    #[test]
-    fn part_1_test() {
-        let output = super::part_1(TEST_INPUT);
-        assert_eq!(output, 95437);
-    }
-
-    #[test]
-    fn part_1() {
-        let output = super::part_1(FULL_INPUT);
-        assert_eq!(output, 1723892);
-    }
-
-    #[test]
-    fn part_2_test() {
-        let output = super::part_2(TEST_INPUT);
-        assert_eq!(output, 24933642);
-    }
-
-    #[test]
-    pub fn part_2() {
-        let output = super::part_2(FULL_INPUT);
-        assert_eq!(output, 8474158);
-    }
-}
+crate::aoctest!(95437, 1723892, 24933642, 8474158);

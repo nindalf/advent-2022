@@ -71,32 +71,5 @@ pub fn part_2(input: &str) -> usize {
         .unwrap()
 }
 
-#[cfg(test)]
-mod tests {
-    static TEST_INPUT: &str = include_str!("test-input.txt");
-    static FULL_INPUT: &str = include_str!("input.txt");
+crate::aoctest!(21, 1803, 8, 268912);
 
-    #[test]
-    fn part_1_test() {
-        let output = super::part_1(TEST_INPUT);
-        assert_eq!(output, 21);
-    }
-
-    #[test]
-    fn part_1() {
-        let output = super::part_1(FULL_INPUT);
-        assert_eq!(output, 1803);
-    }
-
-    #[test]
-    fn part_2_test() {
-        let output = super::part_2(TEST_INPUT);
-        assert_eq!(output, 8);
-    }
-
-    #[test]
-    fn part_2() {
-        let output = super::part_2(FULL_INPUT);
-        assert_eq!(output, 268912);
-    }
-}
