@@ -204,8 +204,6 @@ Find the signal strength during the 20th, 60th, 100th, 140th, 180th, and 220th c
 
 Your puzzle answer was `14520`.
 
-The first half of this puzzle is complete! It provides one gold star: \*
-
 \--- Part Two ---
 ----------
 
@@ -216,12 +214,12 @@ You count the pixels on the CRT: 40 wide and 6 high. This CRT screen draws the t
 Like the CPU, the CRT is tied closely to the clock circuit: the CRT draws *a single pixel during each cycle*. Representing each pixel of the screen as a `#`, here are the cycles during which the first and last pixel in each row are drawn:
 
 ```
-Cycle   1 -&gt; ######################################## &lt;- Cycle  40
-Cycle  41 -&gt; ######################################## &lt;- Cycle  80
-Cycle  81 -&gt; ######################################## &lt;- Cycle 120
-Cycle 121 -&gt; ######################################## &lt;- Cycle 160
-Cycle 161 -&gt; ######################################## &lt;- Cycle 200
-Cycle 201 -&gt; ######################################## &lt;- Cycle 240
+Cycle   1 -> ######################################## <- Cycle  40
+Cycle  41 -> ######################################## <- Cycle  80
+Cycle  81 -> ######################################## <- Cycle 120
+Cycle 121 -> ######################################## <- Cycle 160
+Cycle 161 -> ######################################## <- Cycle 200
+Cycle 201 -> ######################################## <- Cycle 240
 
 ```
 
@@ -343,8 +341,12 @@ Allowing the program to run to completion causes the CRT to produce the followin
 
 Render the image given by your program. *What eight capital letters appear on your CRT?*
 
-Answer:
+Your puzzle answer was `PZBGZEJB`.
 
-Although it hasn't changed, you can still [get your puzzle input](10/input).
+Both parts of this puzzle are complete! They provide two gold stars: \*\*
 
-You can also [Shareon [Twitter](https://twitter.com/intent/tweet?text=I%27ve+completed+Part+One+of+%22Cathode%2DRay+Tube%22+%2D+Day+10+%2D+Advent+of+Code+2022&amp;url=https%3A%2F%2Fadventofcode%2Ecom%2F2022%2Fday%2F10&amp;related=ericwastl&amp;hashtags=AdventOfCode) [Mastodon](javascript:void(0);)] this puzzle.
+At this point, you should [return to your Advent calendar](/2022) and try another puzzle.
+
+If you still want to see it, you can [get your puzzle input](10/input).
+
+You can also [Shareon [Twitter](https://twitter.com/intent/tweet?text=I%27ve+completed+%22Cathode%2DRay+Tube%22+%2D+Day+10+%2D+Advent+of+Code+2022&amp;url=https%3A%2F%2Fadventofcode%2Ecom%2F2022%2Fday%2F10&amp;related=ericwastl&amp;hashtags=AdventOfCode) [Mastodon](javascript:void(0);)] this puzzle.

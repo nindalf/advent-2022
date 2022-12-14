@@ -120,8 +120,57 @@ What are the indices of the pairs that are already *in the right order*? (The fi
 
 Determine which pairs of packets are already in the right order. *What is the sum of the indices of those pairs?*
 
-To begin, [get your puzzle input](13/input).
+Your puzzle answer was `5580`.
 
-Answer:
+\--- Part Two ---
+----------
 
-You can also [Shareon [Twitter](https://twitter.com/intent/tweet?text=%22Distress+Signal%22+%2D+Day+13+%2D+Advent+of+Code+2022&amp;url=https%3A%2F%2Fadventofcode%2Ecom%2F2022%2Fday%2F13&amp;related=ericwastl&amp;hashtags=AdventOfCode) [Mastodon](javascript:void(0);)] this puzzle.
+Now, you just need to put *all* of the packets in the right order. Disregard the blank lines in your list of received packets.
+
+The distress signal protocol also requires that you include two additional *divider packets*:
+
+```
+[[2]]
+[[6]]
+
+```
+
+Using the same rules as before, organize all packets - the ones in your list of received packets as well as the two divider packets - into the correct order.
+
+For the example above, the result of putting the packets in the correct order is:
+
+```
+[]
+[[]]
+[[[]]]
+[1,1,3,1,1]
+[1,1,5,1,1]
+[[1],[2,3,4]]
+[1,[2,[3,[4,[5,6,0]]]],8,9]
+[1,[2,[3,[4,[5,6,7]]]],8,9]
+[[1],4]
+[[2]]
+[3]
+[[4,4],4,4]
+[[4,4],4,4,4]
+[[6]]
+[7,7,7]
+[7,7,7,7]
+[[8,7,6]]
+[9]
+
+```
+
+Afterward, locate the divider packets. To find the *decoder key* for this distress signal, you need to determine the indices of the two divider packets and multiply them together. (The first packet is at index 1, the second packet is at index 2, and so on.) In this example, the divider packets are *10th* and *14th*, and so the decoder key is `*140*`.
+
+Organize all of the packets into the correct order. *What is the decoder key for the distress signal?*
+
+Your puzzle answer was `26200`.
+
+Both parts of this puzzle are complete! They provide two gold stars: \*\*
+
+At this point, you should [return to your Advent calendar](/2022) and try another puzzle.
+
+If you still want to see it, you can [get your puzzle input](13/input).
+
+You can also [Shareon [Twitter](https://twitter.com/intent/tweet?text=I%27ve+completed+%22Distress+Signal%22+%2D+Day+13+%2D+Advent+of+Code+2022&amp;url=https%3A%2F%2Fadventofcode%2Ecom%2F2022%2Fday%2F13&amp;related=ericwastl&amp;hashtags=AdventOfCode) [Mastodon](javascript:void(0);)] this puzzle.
