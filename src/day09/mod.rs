@@ -114,4 +114,3 @@ enum Movement {
 }
 
 crate::aoctest!(88, 6384, 36, 2734);
-

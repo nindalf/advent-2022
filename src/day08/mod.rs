@@ -72,4 +72,3 @@ pub fn part_2(input: &str) -> usize {
 }
 
 crate::aoctest!(21, 1803, 8, 268912);
-
