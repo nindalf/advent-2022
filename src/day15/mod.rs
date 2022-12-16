@@ -23,29 +23,15 @@ pub fn part_1(input: &str) -> usize {
 }
 
 #[inline]
-pub fn part_2(input: &str) -> i32 {
+pub fn part_2(input: &str) -> i64 {
     let sensors = get_sensors(input);
-    let ans = Point {
-        x: 2843633,
-        y: 2948438,
-    };
-    sensors.iter().for_each(|s| {
-        println!(
-            "{} {} {} {}",
-            s.sensor_range,
-            (s.sensor_location.x - ans.x).abs() + (s.sensor_location.y - ans.y).abs(),
-            s.sensor_range
-                < (s.sensor_location.x - ans.x).abs() + (s.sensor_location.y - ans.y).abs(),
-            s.within_range(&ans)
-        )
-    });
     let boundary = if sensors.len() == 14 { 20 } else { 4000000 };
     sensors
         .iter()
         .flat_map(|s| s.manhattan_circle())
         .filter(|point| point.x >= 0 && point.x <= boundary && point.y >= 0 && point.y <= boundary)
         .filter(|point| !sensors.iter().any(|s| s.within_range(&point)))
-        .map(|point| point.x * 4000000 + point.y)
+        .map(|point| (point.x as i64) * 4000000 + (point.y as i64))
         .next()
         .unwrap()
 }
@@ -118,4 +104,4 @@ impl Sensor {
     }
 }
 
-crate::aoctest!(26, 4886370, 56000011, 1234);
+crate::aoctest!(26, 4886370, 56000011, 11374534948438);
