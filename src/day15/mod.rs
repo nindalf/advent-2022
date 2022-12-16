@@ -30,13 +30,16 @@ pub fn part_2(input: &str) -> i32 {
         y: 2948438,
     };
     sensors.iter().for_each(|s| {
-        println!("{} {} {} {}", s.sensor_range, (s.sensor_location.x - ans.x).abs() + (s.sensor_location.y - ans.y).abs(), s.sensor_range < (s.sensor_location.x - ans.x).abs() + (s.sensor_location.y - ans.y).abs(), s.within_range(&ans))
+        println!(
+            "{} {} {} {}",
+            s.sensor_range,
+            (s.sensor_location.x - ans.x).abs() + (s.sensor_location.y - ans.y).abs(),
+            s.sensor_range
+                < (s.sensor_location.x - ans.x).abs() + (s.sensor_location.y - ans.y).abs(),
+            s.within_range(&ans)
+        )
     });
-    let boundary = if sensors.len() == 14 {
-        20
-    } else {
-        4000000
-    };
+    let boundary = if sensors.len() == 14 { 20 } else { 4000000 };
     sensors
         .iter()
         .flat_map(|s| s.manhattan_circle())
